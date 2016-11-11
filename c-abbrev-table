@@ -1,0 +1,26 @@
+;; -*- coding: utf-8; mode: emacs-lisp -*-
+(define-abbrev-table 'c-macros-includes-abbrev-table
+  '(("#i" "#include" nil :system t)
+    ("#e" "#endif" nil :system t)
+    ("#d" "#define" nil :system t)
+    ("#ifd" "#ifdef" nil :system t)
+    ("#ifn" "#ifndef" nil :system t))
+  "Includes abbrevs b/c cant have optional character looking back."
+  :regexp "\\(#\\w+\\)")
+
+(define-abbrev-table 'c-mode-abbrev-table
+  '(
+    ("dmax" "#define max(A, B) ((A) > (B) ? (A) : (B))" nil :system t)
+    ("imain" "int main (int argc, char** argv) {\n" nil :system t)
+    )
+  "C-mode abbrevs."
+  :parents (list c-macros-includes-abbrev-table
+                 global-abbrev-table
+                 fundamental-mode-abbrev-table))
+
+(define-abbrev-table 'c++-mode-abbrev-table
+  '()
+  "C++-mode abbrevs."
+  :parents (list c-macros-includes-abbrev-table
+                 global-abbrev-table
+                 fundamental-mode-abbrev-table))
