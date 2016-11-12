@@ -56,11 +56,12 @@ and <code>...</code>."
 ;; toggle font-locking for doxygen
 (defvar-local c++-tools--add-font t)
 (defun c++-tools-doxygen ()
-  (interactive "P")
+  (interactive)
   (if (setq c++-tools--add-font (not c++-tools--add-font))
       (font-lock-refresh-defaults)
     (font-lock-add-keywords
-     'c++-mode
+     ;; 'c++-mode
+     nil
      '(("\\(<\\(?:code\\|tt\\)>\"?\\)\\([^<]*?\\)\\(\"?</\\(?:code\\|tt\\)>\\)"
         (0 (prog1 ()
              (let* ((expr (match-string-no-properties 2))
