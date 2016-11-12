@@ -77,7 +77,7 @@
       ;; install dependencies, then recall to install rest
       (nvp-with-gnu/w32
           (nvp-with-process-log
-            (call-interactively 'c-tools-install-deps) 'pop-on-error
+            (call-interactively 'c-tools-install-deps) :pop-on-error
             (c-tools-install arg 'includes))
         ;; FIXME: msys / cygwin install cmake/clang
         (c-tools-install arg 'includes))))))
@@ -106,7 +106,7 @@
   (defun c-tools-install-irony (&optional check-deps)
     (if check-deps
         (nvp-with-process-log
-          (call-interactively 'c-tools-install-deps) 'pop-on-error
+          (call-interactively 'c-tools-install-deps) :pop-on-error
           (c-tools-install-irony nil))
       (if (not (require 'irony nil t))
           (nvp-log "Error: `irony' not installed")
