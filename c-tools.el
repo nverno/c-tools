@@ -61,7 +61,7 @@
       ;; write sys include paths to c-tools-include.el
       (nvp-with-process-log 
         (c-tools-install-includes arg) nil
-        (load-file (expand-file-name "c-tools-include" c-tools--dir))
+        (load (expand-file-name "c-tools-include" c-tools--dir))
         (c-tools-install arg nil 'irony)))
      (irony
       ;; install irony server

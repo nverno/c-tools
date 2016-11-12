@@ -2,7 +2,7 @@
 
 udpated=0
 update() {
-    if [ $updated = 0 ]; then
+    if [ -z $updated ]; then
        sudo apt-get -qq update
        updated=1
     fi
@@ -29,7 +29,7 @@ done
 if ! ls /usr/include | grep boost 2>&1 >/dev/null ; then
     printf "Installing boost\n"
     update
-    sudo apt-get instal -y libboost-all-dev
+    sudo apt-get install -y libboost-all-dev
 fi
 if ! ls /usr/include | grep CUnit 2>&1 >/dev/null ; then
     printf "Installing CUnit\n"
