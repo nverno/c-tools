@@ -138,7 +138,7 @@
 ;; ------------------------------------------------------------
 ;;; Interative
 
-(nvp-newline "c-tools-newline-dwim" nil
+(nvp-newline c-tools-newline-dwim nil
   :pairs (("{" "}"))
   :comment-re (" *\\(?:/\\*\\|\\*\\)" . "\\*/ *")
   :comment-start "* ")
