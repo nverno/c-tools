@@ -186,7 +186,7 @@
          (out (file-name-sans-extension file))
          (compile-command
           (format "%s %s -o %s%s %s" (nvp-program "gcc")
-                  flags out (nvp-with-gnu/w32 "" ".exe") file)))
+                  flags out (nvp-with-gnu/w32 ".out" ".exe") file)))
     (nvp-compile-basic)))
 
 ;; ------------------------------------------------------------
