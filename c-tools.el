@@ -97,7 +97,8 @@
     (when (or (not (file-exists-p includes))
               (or arg (nvp-file-older-than-days includes 5)))
       (start-process "bash" "*nvp-install*" "bash"
-                     (expand-file-name "tools/includes.sh" c-tools--dir)
+                     (expand-file-name "tools/includes.sh"
+                                       c-tools--dir)
                      "make_sys_includes"))))
 
 ;;; Install irony server
