@@ -84,11 +84,11 @@
 
 (nvp-with-gnu
   ;; install dependencies as sudo and return process object
-  (defun c-tools-install-deps (password)
-    (interactive
-     (list (read-passwd "Password: ")))
+  (defun c-tools-install-deps ()
+    (interactive)
     (nvp-ext-sudo-command
-     password (expand-file-name "tools/install.sh" c-tools--dir))))
+     nil
+     (expand-file-name "tools/install.sh" c-tools--dir))))
 
 ;;; Cache system include paths
 ;; regen includes after 5 days or force with ARG
