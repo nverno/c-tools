@@ -45,6 +45,11 @@
                   flags out (nvp-with-gnu/w32 ".out" ".exe") file)))
     (nvp-compile-basic)))
 
+(defun c++-tools-compile-and-run (keep)
+  (interactive "P")
+  (funcall-interactively 'c-tools-compile-and-run
+                         keep (nvp-program "g++")))
+
 ;;; Font-lock
 
 (defface font-lock-doxygen-face
