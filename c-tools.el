@@ -32,7 +32,6 @@
 (eval-when-compile
   (require 'cl-lib)
   (require 'nvp-macro)
-  (defvar yas-snippet-dirs)
   (defvar gud-comint-buffer)
   (defvar irony-server-install-prefix)
   (defvar nvp-c-include-dirs)
@@ -44,9 +43,8 @@
 (autoload 'nvp-compile-basic "nvp-compile")
 (autoload 'nvp-compile-cmake "nvp-compile")
 
-(defvar c-tools--dir nil)
-(when load-file-name
-  (setq c-tools--dir (file-name-directory load-file-name)))
+(nvp-package-dir c-tools--dir)
+(nvp-package-load-snippets c-tools--dir)
 
 ;; ------------------------------------------------------------
 ;;; Install
@@ -137,7 +135,7 @@
        "cmake" "*nvp-install*" (format "cmake %s && %s" args build-cmd)))))
 
 ;; ------------------------------------------------------------
-;;; Interative
+;;; Commands
 
 (nvp-newline c-tools-newline-dwim nil
   :pairs (("{" "}"))
@@ -217,20 +215,6 @@
         (insert (format "#ifndef %s\n#define %s\n\n" guard guard))
         (goto-char (point-max))
         (insert (format "\n#endif /* %s */" guard))))))
-
-;; ------------------------------------------------------------
-;;; Setup
-
-(eval-after-load 'yasnippet
-  '(let ((dir (expand-file-name "snippets" c-tools--dir))
-         (dirs (or (and (consp yas-snippet-dirs) yas-snippet-dirs)
-                   (cons yas-snippet-dirs ()))))
-     (unless (member dir dirs)
-       (setq yas-snippet-dirs (delq nil (cons dir dirs))))
-     (yas-load-directory dir)))
-
-;; ------------------------------------------------------------
-(declare-function yas-load-directory "yasnippet")
 
 (provide 'c-tools)
 ;;; c-tools.el ends here
