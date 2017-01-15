@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: private
-# key: pr
+# key: private
 # --
 private:
         $0
