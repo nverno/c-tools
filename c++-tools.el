@@ -47,8 +47,7 @@
 
 (defun c++-tools-compile-and-run (keep)
   (interactive "P")
-  (funcall-interactively 'c-tools-compile-and-run
-                         keep (nvp-program "g++")))
+  (funcall-interactively 'c-tools-compile-and-run keep (nvp-program "g++")))
 
 ;;; Font-lock
 
