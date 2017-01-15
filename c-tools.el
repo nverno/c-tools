@@ -188,14 +188,15 @@
                   flags out (nvp-with-gnu/w32 ".out" ".exe") file)))
     (nvp-compile-basic)))
 
-(defun c-tools-compile-and-run (keep &optional compiler)
+(defun c-tools-compile-and-run (keep &optional compiler flags)
   (interactive "P")
   (let* ((out (concat (file-name-sans-extension
                        (file-name-nondirectory buffer-file-name))
                       (nvp-with-gnu/w32 ".out" ".exe")))
          (compile-command
-         (concat (or compiler (nvp-program "gcc"))
-                 " -s -O3 " buffer-file-name " -o " out "; ./" out
+         (concat (or compiler (nvp-program "gcc")) " "
+                 (or flags "-s -O3") " "
+                 buffer-file-name " -o " out "; ./" out
                  (unless keep (concat "; rm " out)))))
     (nvp-compile-basic)))
 
