@@ -6,7 +6,8 @@
     ("#ifd" "#ifdef" nil :system t)
     ("#ifn" "#ifndef" nil :system t))
   "Includes abbrevs b/c cant have optional character looking back."
-  :regexp "\\(#\\w+\\)")
+  :regexp "\\(#\\w+\\)"
+  :parents (list prog-mode-abbrev-table))
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
@@ -14,13 +15,11 @@
     ("imain" "int main (int argc, char** argv) {\n" nil :system t)
     )
   "C-mode abbrevs."
-  :parents (list c-macros-includes-abbrev-table
-                 global-abbrev-table
-                 fundamental-mode-abbrev-table))
+  :parents (list c-macros-includes-abbrev-table))
 
 (define-abbrev-table 'c++-mode-abbrev-table
-  '()
+  '(
+    ("th" "this" nil :system t)
+    )
   "C++-mode abbrevs."
-  :parents (list c-macros-includes-abbrev-table
-                 global-abbrev-table
-                 fundamental-mode-abbrev-table))
+  :parents (list c-macros-includes-abbrev-table))

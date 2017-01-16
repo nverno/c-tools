@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: forit
+# key: forit
+# --
+for (${1:auto it} = ${2:var}.begin(); ${1:$(c-yas-var)} != $2.end(); ${1:$(c-yas-var)}++) ${3:{
+  $0
+}}

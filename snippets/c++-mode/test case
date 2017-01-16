@@ -3,7 +3,6 @@
 # key: tc
 # group: testing
 # --
-BOOST_AUTO_TEST_CASE( ${1:test_case} )
-{
+BOOST_AUTO_TEST_CASE( ${1:test_case} ) {
         $0
 }

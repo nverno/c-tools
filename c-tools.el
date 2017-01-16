@@ -217,5 +217,17 @@
         (goto-char (point-max))
         (insert (format "\n#endif /* %s */" guard))))))
 
+;; -------------------------------------------------------------------
+;;; Yas
+(eval-when-compile
+  (defvar yas-text))
+
+;; get variable name from declaration, either with type or not
+;; eg., i = 1 or int i = 1 => `i'
+(defsubst c-yas-var ()
+  (let* ((str (car (split-string yas-text "=" t " ")))
+         (strs (split-string str nil t " ")))
+    (or (cadr strs) (car strs))))
+
 (provide 'c-tools)
 ;;; c-tools.el ends here
