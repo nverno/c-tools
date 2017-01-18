@@ -23,3 +23,12 @@
     )
   "C++-mode abbrevs."
   :parents (list c-macros-includes-abbrev-table))
+
+(define-abbrev-table 'boost-abbrev-table
+  '(
+    ("bc" "BOOST_CHECK" nil :system t)
+    ("br" "BOOST_REQUIRE" nil :system t)
+    ("batc" ["BOOST_AUTO_TEST_CASE(  )" 2 nil nil] expand-abbrev-hook :system t)
+    )
+  "Boost abbrevs."
+  :parents (list c++-mode-abbrev-table))

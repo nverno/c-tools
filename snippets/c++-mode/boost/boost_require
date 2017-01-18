@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: boost_require
+# key: breq
+# --
+BOOST_REQUIRE( ${1:condition} );
