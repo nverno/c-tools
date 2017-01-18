@@ -30,7 +30,21 @@
   (require 'nvp-macro)
   (require 'cl-lib))
 
+;; -------------------------------------------------------------------
+;;; Commands 
+
 ;; boost.test
+(defun c++-test-run-tests (arg)
+  (interactive "P")
+  (nvp-with-project
+    (:test-re ".*test.*\.cpp" :root "")
+    (message (nvp-test-select-test))))
+
+;;;###autoload
+(defun c++-test-jump-to-test ()
+  (interactive)
+  (nvp-with-project (:test-re ".*test.*\.cpp" :root "")
+    ))
 
 (provide 'c++-test)
 ;;; c++-test.el ends here
