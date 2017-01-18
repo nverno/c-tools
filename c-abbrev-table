@@ -28,7 +28,14 @@
   '(
     ("bc" "BOOST_CHECK" nil :system t)
     ("br" "BOOST_REQUIRE" nil :system t)
+    ("bw" "BOOST_WARN" nil :system t)
+    ("bcm" "BOOST_CHECK_MESSAGE" nil :system t)
+    ("bce" "BOOST_CHECK_EQUAL" nil :system t)
+    ("bct" "BOOST_CHECK_THROW" nil :system t)
     ("batc" ["BOOST_AUTO_TEST_CASE(  )" 2 nil nil] expand-abbrev-hook :system t)
+    ("bats"
+     ["BOOST_AUTO_TEST_SUITE(  )\nBOOST_AUTO_TEST_SUITE_END()" 30 nil nil]
+     expand-abbrev-hook :system t)
     )
   "Boost abbrevs."
   :parents (list c++-mode-abbrev-table))
