@@ -30,5 +30,7 @@
   (require 'nvp-macro)
   (require 'cl-lib))
 
+;; boost.test
+
 (provide 'c++-test)
 ;;; c++-test.el ends here
