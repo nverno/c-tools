@@ -30,6 +30,7 @@
   (require 'nvp-macro)
   (require 'cl-lib))
 (require 'nvp-test)
+(autoload 'yas-expand "yasnippet")
 
 ;; -------------------------------------------------------------------
 ;;; Util
@@ -40,14 +41,15 @@
    `(nvp-with-project (:test-re ".*test.*\.cpp" :root "test")
       ,@body)))
 
-;; compile and run boost.test in current buffer
-(defun c++-test-run-unit-test ()
+;; compile and run boost.test in current buffer. Removes executable after
+;; running unless KEEP is non-nil
+(defun c++-test-run-unit-test (&optional keep)
   (let* ((out (concat (nvp-bfn) (nvp-with-gnu/w32 ".out" ".exe")))
          (compile-command
          (concat (nvp-program "g++") " -std=c++11 -O3 -s -o " out
                  " " (file-name-nondirectory buffer-file-name)
                  " -lboost_unit_test_framework "
-                 "; ./" out "; rm " out))
+                 "; ./" out (and (not keep) (concat "; rm " out))))
          (compilation-read-command nil))
     (call-interactively 'compile)))
 
@@ -56,20 +58,26 @@
 
 ;; run boost.test
 ;;;###autoload
-(defun c++-test-run-unit-tests ()
-  "Run unit tests in test directory, if more than one prompts for test file."
-  (interactive)
+(defun c++-test-run-unit-tests (arg)
+  "Run unit tests in test directory, if more than one prompts for test file.
+With prefix don't remove compiled test."
+  (interactive "P")
   (with-c++-vars
-    (nvp-with-test nil (c++-test-run-unit-test))))
+    (nvp-with-test nil (c++-test-run-unit-test arg))))
 
 ;;;###autoload
-(defun c++-test-jump-to-test ()
-  "Jump to tests in test directory."
-  (interactive)
+(defun c++-test-jump-to-test (arg)
+  "Jump to tests in test directory, activates boost abbrev table in test buffer.
+With prefix, expands snippet for new auto test."
+  (interactive "P")
   (with-c++-vars
     (nvp-with-test nil
       (setq-local local-abbrev-table boost-abbrev-table)
-      (pop-to-buffer (current-buffer)))))
+      (pop-to-buffer (current-buffer))
+      (when arg
+        (goto-char (point-max))
+        (insert "\nbatc")
+        (call-interactively 'yas-expand)))))
 
 (provide 'c++-test)
 ;;; c++-test.el ends here
