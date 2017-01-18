@@ -39,22 +39,41 @@
  (defmacro with-c++-vars (&rest body)
    (declare (indent defun))
    `(nvp-with-project (:test-re ".*test.*\.cpp" :root "test")
-      ,@body)))
+      ,@body))
+
+ (defmacro setup-test-buffer ()
+   `(progn
+      (setq-local local-abbrev-table boost-abbrev-table)
+      (make-local-variable 'c++-mode-map)
+      (define-key c++-mode-map (kbd "C-c C-c") 'c++-test-run-unit-test))))
+
+;; init new test dir / unit test file
+(defun c++-test-init (&optional dir)
+  (let* ((test-dir (or dir (expand-file-name "test" default-directory)))
+         (test-file (expand-file-name "test.cpp" test-dir)))
+    (unless (file-exists-p test-file)
+      (make-directory test-dir 'parents)
+      (with-current-buffer (find-file-other-window test-file)
+        (setup-test-buffer)
+        (insert "boost_init")
+        (pop-to-buffer (current-buffer))
+        (call-interactively 'yas-expand)))))
+
+;; -------------------------------------------------------------------
+;;; Commands 
 
 ;; compile and run boost.test in current buffer. Removes executable after
 ;; running unless KEEP is non-nil
 (defun c++-test-run-unit-test (&optional keep)
+  (interactive "P")
   (let* ((out (concat (nvp-bfn) (nvp-with-gnu/w32 ".out" ".exe")))
          (compile-command
-         (concat (nvp-program "g++") " -std=c++11 -O3 -s -o " out
+         (concat (nvp-program "g++") " -std=c++14 -O3 -s -o " out
                  " " (file-name-nondirectory buffer-file-name)
                  " -lboost_unit_test_framework "
                  "; ./" out (and (not keep) (concat "; rm " out))))
          (compilation-read-command nil))
     (call-interactively 'compile)))
-
-;; -------------------------------------------------------------------
-;;; Commands 
 
 ;; run boost.test
 ;;;###autoload
@@ -71,8 +90,8 @@ With prefix don't remove compiled test."
 With prefix, expands snippet for new auto test."
   (interactive "P")
   (with-c++-vars
-    (nvp-with-test nil
-      (setq-local local-abbrev-table boost-abbrev-table)
+    (nvp-with-test (c++-test-init)
+      (setup-test-buffer)
       (pop-to-buffer (current-buffer))
       (when arg
         (goto-char (point-max))

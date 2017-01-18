@@ -37,7 +37,7 @@
 ;; pretty much same as c-tools-compile
 (nvp-make-or-compile-fn c++-tools-compile
   (:default-prompt (read-from-minibuffer "Compiler flags: "))
-  (let* ((flags (or args "-Wall -O2 -g -std=c++11"))
+  (let* ((flags (or args "-Wall -O2 -g -std=c++14"))
          (file (file-name-nondirectory buffer-file-name))
          (out (file-name-sans-extension file))
          (compile-command
@@ -48,7 +48,7 @@
 (defun c++-tools-compile-and-run (keep)
   (interactive "P")
   (funcall-interactively 'c-tools-compile-and-run keep
-                         (nvp-program "g++") "-std=c++11 -O3 -s"))
+                         (nvp-program "g++") "-std=c++14 -O3 -s"))
 
 ;;; Font-lock
 
