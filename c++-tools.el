@@ -33,24 +33,7 @@
 ;; -------------------------------------------------------------------
 ;;; Commands 
 
-;; get current boost version
-(defun c++-tools-boost-version (arg &optional boost-root)
-  (interactive "P")
-  (when arg
-    (setq boost-root (read-directory-name "Boost root: ")))
-  (let ((file (expand-file-name
-               "boost/version.hpp" (or boost-root "/usr/include"))))
-    (and (file-exists-p file)
-         (with-current-buffer (find-file-noselect file)
-           (goto-char (point-min))
-           (when (re-search-forward "#define BOOST_VERSION \\([0-9]+\\)")
-             (let ((ver (string-to-number (match-string 1))))
-               (message "boost version: %s.%s_%s"
-                        (/ ver 100000) (% (/ ver 100) 1000) (% ver 100))))
-           (kill-buffer (current-buffer))))))
-
 ;;; Compile
-
 ;; pretty much same as c-tools-compile
 (nvp-make-or-compile-fn c++-tools-compile
   (:default-prompt (read-from-minibuffer "Compiler flags: "))
