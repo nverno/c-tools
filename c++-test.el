@@ -98,5 +98,9 @@ With prefix, expands snippet for new auto test."
         (insert "\nbatc")
         (call-interactively 'yas-expand)))))
 
+(defun c++-test-help ()
+  (interactive)
+  (browse-url "https://github.com/jsankey/boost.test-examples/"))
+
 (provide 'c++-test)
 ;;; c++-test.el ends here
