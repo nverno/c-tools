@@ -1,4 +1,4 @@
-;;; c++-tools --- 
+;;; c++-tools ---  -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
@@ -25,12 +25,29 @@
 ;; Floor, Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
-
-;; [![Build Status](https://travis-ci.org/nverno/c-tools.svg?branch=master)](https://travis-ci.org/nverno/c-tools)
 ;;; Code:
 (eval-when-compile
   (require 'nvp-macro))
 (require 'c-tools)
+
+;; -------------------------------------------------------------------
+;;; Commands 
+
+;; get current boost version
+(defun c++-tools-boost-version (arg &optional boost-root)
+  (interactive "P")
+  (when arg
+    (setq boost-root (read-directory-name "Boost root: ")))
+  (let ((file (expand-file-name
+               "boost/version.hpp" (or boost-root "/usr/include"))))
+    (and (file-exists-p file)
+         (with-current-buffer (find-file-noselect file)
+           (goto-char (point-min))
+           (when (re-search-forward "#define BOOST_VERSION \\([0-9]+\\)")
+             (let ((ver (string-to-number (match-string 1))))
+               (message "boost version: %s.%s_%s"
+                        (/ ver 100000) (% (/ ver 100) 1000) (% ver 100))))
+           (kill-buffer (current-buffer))))))
 
 ;;; Compile
 
@@ -50,6 +67,7 @@
   (funcall-interactively 'c-tools-compile-and-run keep
                          (nvp-program "g++") "-std=c++14 -O3 -s"))
 
+;; -------------------------------------------------------------------
 ;;; Font-lock
 
 (defface font-lock-doxygen-face

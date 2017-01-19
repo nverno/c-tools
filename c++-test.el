@@ -44,8 +44,8 @@
  (defmacro setup-test-buffer ()
    `(progn
       (setq-local local-abbrev-table boost-abbrev-table)
-      (make-local-variable 'c++-mode-map)
-      (define-key c++-mode-map (kbd "C-c C-c") 'c++-test-run-unit-test))))
+      (nvp-with-local-bindings
+        ("C-c C-c" . c++-test-run-unit-test)))))
 
 ;; init new test dir / unit test file
 (defun c++-test-init (&optional dir)
