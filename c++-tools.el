@@ -37,7 +37,7 @@
 ;; pretty much same as c-tools-compile
 (nvp-make-or-compile-fn c++-tools-compile
   (:default-prompt (read-from-minibuffer "Compiler flags: "))
-  (let* ((flags (or args "-Wall -O2 -g -std=c++14"))
+  (let* ((flags (or args "-Wall -Werror -O2 -g -std=c++14"))
          (file (file-name-nondirectory buffer-file-name))
          (out (file-name-sans-extension file))
          (compile-command
