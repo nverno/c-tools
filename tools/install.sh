@@ -10,7 +10,7 @@ update() {
     fi
 }
 
-progs=(clang cmake valgrind boost CUnit)
+progs=(clang cmake valgrind boost CUnit check)
 for prog in "${progs[@]}"; do
     if ! hash $prog 2>/dev/null ; then
         update
