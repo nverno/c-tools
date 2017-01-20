@@ -40,7 +40,8 @@
 (eval-when-compile
  (defmacro with-c++-vars (&rest body)
    (declare (indent defun))
-   `(nvp-with-project (:test-re ".*test.*\.cpp" :root "test")
+   `(nvp-with-project (:test-re ".*test.*\.cpp"
+                                :root '("test" "tests" ".git" ".projectile"))
       ,@body))
 
  (defmacro setup-c++-test-buffer ()

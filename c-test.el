@@ -41,7 +41,8 @@
   ;; setup mode specific dynamic variables
   (defmacro with-c-vars (&rest body)
     (declare (indent defun))
-    `(nvp-with-project (:test-re ".*test.*\.c" :root "test")
+    `(nvp-with-project (:test-re ".*\\(?:test\\|check\\).*\.c"
+                                 :root '("test" "tests" ".git" ".projectile"))
        ,@body))
 
   ;; locally set keys in test buffers to run tests
@@ -49,6 +50,7 @@
     `(progn
        (setq-local local-abbrev-table ,(if cunit 'cunit-abbrev-table
                                          'check-abbrev-table))
+       (setq-local nvp-abbrev-local-table ,(if cunit "cunit" "check"))
        (nvp-with-local-bindings
          ("C-c C-c" . c-test-run-unit-test))))
 
@@ -131,6 +133,10 @@ test buffer. With prefix, init template for new test."
 
 ;;;###autoload(autoload 'c-test-jump-to-test "c-test")
 ;;;###autoload(autoload 'c-test-run-unit-tests "c-test")
+
+(defun c-test-help-online ()
+  (interactive)
+  (browse-url "https://libcheck.github.io/check/index.html"))
 
 (provide 'c-test)
 ;;; c-test.el ends here

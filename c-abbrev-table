@@ -43,6 +43,7 @@
 
 (define-abbrev-table 'check-abbrev-table
   '(
+    ("st" ["START_TEST(   )\n{\n}\nEND_TEST" 16 nil nil] expand-abbrev-hook :system t)
     )
   "Check test abbrevs."
   :parents (list c-mode-abbrev-table))
