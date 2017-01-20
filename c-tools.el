@@ -142,6 +142,14 @@
   :comment-re (" *\\(?:/\\*\\|\\*\\)" . "\\*/ *")
   :comment-start "* ")
 
+(defun c-tools-newline-x ()
+  (interactive)
+  (end-of-line)
+  (delete-horizontal-space)
+  (unless (eq (char-before) ?\;)
+    (insert ";"))
+  (newline-and-indent))
+
 ;;; Generate clang complete files
 ;; https://github.com/Rip-Rip/clang_complete/wiki
 ;; discusses making pre-compiled headers for clang_complete

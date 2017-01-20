@@ -28,7 +28,8 @@
 ;;; Code:
 (eval-when-compile
   (require 'nvp-macro)
-  (require 'cl-lib))
+  (require 'cl-lib)
+  (require 'c-test)) ;; setup macros
 (require 'nvp-test)
 (autoload 'yas-expand "yasnippet")
 
@@ -41,7 +42,7 @@
    `(nvp-with-project (:test-re ".*test.*\.cpp" :root "test")
       ,@body))
 
- (defmacro setup-test-buffer ()
+ (defmacro setup-c++-test-buffer ()
    `(progn
       (setq-local local-abbrev-table boost-test-abbrev-table)
       (nvp-with-local-bindings
@@ -49,58 +50,31 @@
 
 ;; init new test dir / unit test file
 (defun c++-test-init (&optional dir)
-  (let* ((test-dir (or dir (expand-file-name "test" default-directory)))
-         (test-file (expand-file-name "test.cpp" test-dir)))
-    (unless (file-exists-p test-file)
-      (make-directory test-dir 'parents)
-      (with-current-buffer (find-file-other-window test-file)
-        (setup-test-buffer)
-        (insert "boost_init")
-        (pop-to-buffer (current-buffer))
-        (call-interactively 'yas-expand)))))
+  (with-c-test-file "test.cpp" dir
+    (setup-c++-test-buffer)
+    (insert "boost_init")
+    (pop-to-buffer (current-buffer))
+    (call-interactively 'yas-expand)))
 
 ;; -------------------------------------------------------------------
 ;;; Commands 
 
-;; compile and run boost.test in current buffer. Removes executable after
-;; running unless KEEP is non-nil
-(defun c++-test-run-unit-test (&optional keep)
-  (interactive "P")
-  (let* ((out (concat (nvp-bfn) (nvp-with-gnu/w32 ".out" ".exe")))
-         (compile-command
-         (concat (nvp-program "g++") " -std=c++14 -O3 -s -o " out
-                 " " (file-name-nondirectory buffer-file-name)
-                 " -lboost_unit_test_framework "
-                 "; ./" out (and (not keep) (concat "; rm " out))))
-         (compilation-read-command nil))
-    (call-interactively 'compile)))
-
-;; run boost.test
-;;;###autoload
-(defun c++-test-run-unit-tests (arg)
-  "Run unit tests in test directory, if more than one prompts for test file.
-With prefix don't remove compiled test."
-  (interactive "P")
-  (with-c++-vars
-    (nvp-with-test nil (c++-test-run-unit-test arg))))
-
-;;;###autoload
-(defun c++-test-jump-to-test (arg)
-  "Jump to tests in test directory, activates boost abbrev table in test buffer.
-With prefix, expands snippet for new auto test."
-  (interactive "P")
-  (with-c++-vars
-    (nvp-with-test (c++-test-init)
-      (setup-test-buffer)
-      (pop-to-buffer (current-buffer))
-      (when arg
-        (goto-char (point-max))
-        (insert "\nbatc")
-        (call-interactively 'yas-expand)))))
-
 (defun c++-test-help ()
   (interactive)
   (browse-url "https://github.com/jsankey/boost.test-examples/"))
+
+(c-test-fns 'c++
+  ;; flags
+  "-std=c++14 -O3 -s -o"
+  ;; link
+  "-lboost_unit_test_framework"
+  ;; the rest inits a new test file
+  (goto-char (point-max))
+  (insert "\nbatc")
+  (call-interactively 'yas-expand))
+
+;;;###autoload(autoload 'c++-test-jump-to-test "c++-test")
+;;;###autoload(autoload 'c++-test-run-unit-tests "c++-test")
 
 (provide 'c++-test)
 ;;; c++-test.el ends here
