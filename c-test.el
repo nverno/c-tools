@@ -28,7 +28,9 @@
 ;;; Code:
 (eval-when-compile
   (require 'nvp-macro)
-  (require 'cl-lib))
+  (require 'cl-lib)
+  (defvar check-abbrev-table)
+  (defvar cunit-abbrev-table))
 (require 'nvp-test)
 (autoload 'yas-expand "yasnippet")
 
@@ -124,7 +126,7 @@ test buffer. With prefix, init template for new test."
   "-std=c11 -O2 -s -o"
   ;; link
   nil
-  ;; init new test file
+  ;; init new test case
   (insert "In progress\n"))
 
 ;;;###autoload(autoload 'c-test-jump-to-test "c-test")

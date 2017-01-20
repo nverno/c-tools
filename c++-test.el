@@ -29,7 +29,8 @@
 (eval-when-compile
   (require 'nvp-macro)
   (require 'cl-lib)
-  (require 'c-test)) ;; setup macros
+  (require 'c-test) ;; setup macros
+  (defvar boost-test-abbrev-table))
 (require 'nvp-test)
 (autoload 'yas-expand "yasnippet")
 
@@ -68,7 +69,7 @@
   "-std=c++14 -O3 -s -o"
   ;; link
   "-lboost_unit_test_framework"
-  ;; the rest inits a new test file
+  ;; the rest inits a new test case when jumping with prefix
   (goto-char (point-max))
   (insert "\nbatc")
   (call-interactively 'yas-expand))
