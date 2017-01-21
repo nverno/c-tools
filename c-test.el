@@ -30,7 +30,8 @@
   (require 'nvp-macro)
   (require 'cl-lib)
   (defvar check-abbrev-table)
-  (defvar cunit-abbrev-table))
+  (defvar cunit-abbrev-table)
+  (defvar nvp-abbrev-local-table))
 (require 'nvp-test)
 (autoload 'yas-expand "yasnippet")
 
