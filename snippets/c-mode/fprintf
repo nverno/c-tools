@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: fprintf
+# key: fprf
+# --
+fprintf(${1:stdout}, "${1:%s}", $0);
