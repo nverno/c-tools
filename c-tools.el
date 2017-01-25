@@ -196,17 +196,19 @@
                   flags out (nvp-with-gnu/w32 ".out" ".exe") file)))
     (nvp-compile-basic)))
 
+;; compile current file and run it with output to compilation buffer
 (defun c-tools-compile-and-run (keep &optional compiler flags)
   (interactive "P")
   (let* ((out (concat (file-name-sans-extension
                        (file-name-nondirectory buffer-file-name))
                       (nvp-with-gnu/w32 ".out" ".exe")))
-         (compile-command
-         (concat (or compiler (nvp-program "gcc")) " "
-                 (or flags "-s -O3") " "
-                 buffer-file-name " -o " out "; ./" out
-                 (unless keep (concat "; rm " out)))))
-    (nvp-compile-basic)))
+         (command
+          (concat (or compiler (nvp-program "gcc")) " "
+                  (or flags "-s -O3") " "
+                  buffer-file-name " -o " out "; ./" out
+                  (unless keep (concat "; rm " out)))))
+    (setq-local compile-command command)
+    (nvp-compile-basic 'keep)))
 
 ;; ------------------------------------------------------------
 ;;; Toggle / insert

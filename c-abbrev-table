@@ -25,6 +25,7 @@
     ("veci" "std::vector<int>" nil :system t)
     ("vecd" "std::vector<double>" nil :system t)
     ("vecs" "std::vector<std::string>" nil :system t)
+    ("vecp" ["std::vector<std::pair<>>" 2 nil nil] expand-abbrev-hook :system t)
     )
   "C++-mode abbrevs."
   :parents (list c-macros-includes-abbrev-table))
