@@ -238,5 +238,11 @@
          (strs (split-string str nil t " ")))
     (or (cadr strs) (car strs))))
 
+(defsubst c-yas-args-docstring ()
+  (let ((args (nvp-yas-split-args yas-text)))
+    (and args
+         (mapconcat 'identity
+                    (mapcar (lambda (s) (concat "\n * @param " s)) args) ""))))
+
 (provide 'c-tools)
 ;;; c-tools.el ends here
