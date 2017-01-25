@@ -21,6 +21,10 @@
 (define-abbrev-table 'c++-mode-abbrev-table
   '(
     ("th" "this" nil :system t)
+    ("usi" ["using std::;" 1 nil nil] expand-abbrev-hook :system t)
+    ("veci" "std::vector<int>" nil :system t)
+    ("vecd" "std::vector<double>" nil :system t)
+    ("vecs" "std::vector<std::string>" nil :system t)
     )
   "C++-mode abbrevs."
   :parents (list c-macros-includes-abbrev-table))
