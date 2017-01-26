@@ -208,7 +208,7 @@
                   buffer-file-name " -o " out "; ./" out
                   (unless keep (concat "; rm " out)))))
     (setq-local compile-command command)
-    (nvp-compile-basic 'keep)))
+    (nvp-compile-basic keep)))
 
 ;; ------------------------------------------------------------
 ;;; Toggle / insert
