@@ -42,9 +42,38 @@
 (autoload 'nvp-ext-sudo-command "nvp-ext")
 (autoload 'nvp-compile-basic "nvp-compile")
 (autoload 'nvp-compile-cmake "nvp-compile")
+(autoload 'string-trim-right "subr-x")
 
 (nvp-package-dir c-tools--dir)
 (nvp-package-load-snippets c-tools--dir)
+
+;; -------------------------------------------------------------------
+;;; Util
+
+;; split string STR on commas, but only when not between <..>
+;; eg., "std::vector<std::pair<int,int>> i, int j" =>
+;;      ("std::vector<std::pair<int,int>> i" "int j")
+(defsubst c-tools-split-string (str &optional delim)
+  (when (not (zerop (length str)))
+    (let ((delim (or delim ?\,))
+          (bcount 0)                     ; current opening brace count
+          (prev 0)                       ; substring starting location
+          (trim-p t)                     ; non-nil if skipping beginning blanks
+          res)                           ; list of resulting strings
+      (cl-loop for c across str
+         for i from 0 upto (length str)
+         do (pcase c
+              (`?  (and trim-p (cl-incf prev)))
+              (`?< (cl-incf bcount))
+              (`?> (cl-decf bcount))
+              ((pred (equal delim))
+               (when (zerop bcount)
+                 (push (substring str prev i) res)
+                 (setf prev (1+ i))
+                 (setf trim-p t)))
+              (_ (setf trim-p nil))))
+      (push (string-trim-right (substring str prev)) res)
+      (nreverse res))))
 
 ;; ------------------------------------------------------------
 ;;; Install
@@ -240,8 +269,9 @@
          (strs (split-string str nil t " ")))
     (or (cadr strs) (car strs))))
 
+;; convert functions args to doxygen params
 (defsubst c-yas-args-docstring ()
-  (let ((args (nvp-yas-split-args yas-text)))
+  (let ((args (c-tools-split-string yas-text)))
     (and args
          (mapconcat 'identity
                     (mapcar (lambda (s) (concat "\n * @param " s)) args) ""))))
