@@ -11,6 +11,7 @@
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
+    ("td" "typedef" nil :system t)
     ("so" "sizeof" nil :system t)
     ("ret" ["return ;" 1 nil nil] expand-abbrev-hook :system t)
     ("dmax" "#define max(A, B) ((A) > (B) ? (A) : (B))" nil :system t)

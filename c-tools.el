@@ -256,6 +256,19 @@
         (goto-char (point-max))
         (insert (format "\n#endif /* %s */" guard))))))
 
+(defun c-tools-toggle-doxygen ()
+  (interactive)
+  (save-excursion
+    (when (re-search-forward "\\(?://\\|/\\*+\\)" nil 'move)
+      (if (and (string= (match-string 0) "/**") (eq (char-after) ?<))
+          (progn (delete-char -1)
+                 (delete-char 1))
+        (delete-char -1)
+        (insert "**<")
+        (end-of-line)
+        (unless (looking-back "\\*/\\s-*" (line-beginning-position))
+          (insert comment-end))))))
+
 ;; -------------------------------------------------------------------
 ;;; Yas
 
