@@ -2,6 +2,6 @@
 # name: doxygen file
 # key: doxfile
 # --
-/** @file ${1:$(file-name-nondirectory (buffer-file-name))}
+/** @file ${1:`(file-name-nondirectory (buffer-file-name))`}
  * @brief
  */

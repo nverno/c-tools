@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: function_with_doc
-# key: fundoc
+# key: fundox
 # --
 /** $2
  * ${4:Description}${3:$(c-yas-args-docstring)}
