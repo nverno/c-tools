@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: open stream
+# key: opens
+# --
+FILE *${1:fp};             // input stream
+int result = ${2:SUCCESS}; // exit status
+
+if (argc == 1)
+  result = ${3:read_input}( stdin$4 );
+else
+  while (result == $2 && --argc) {
+    if ((fp == fopen( *++argv, "r" )) != NULL) {
+      result = $3( fp$4 );
+      fclose(fp);
+    } else
+      result = ERROR;
+  }

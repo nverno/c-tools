@@ -4,20 +4,26 @@
     ("#e" "#endif" nil :system t)
     ("#d" "#define" nil :system t)
     ("#ifd" "#ifdef" nil :system t)
-    ("#ifn" "#ifndef" nil :system t))
+    ("#ifn" "#ifndef" nil :system t)
+    ("#max" "#define max(A, B) ((A) > (B) ? (A) : (B))" nil :system t)
+    ("#min" "#define max(A, B) ((A) < (B) ? (A) : (B))" nil :system t))
   "Includes abbrevs b/c cant have optional character looking back."
   :regexp "\\(#\\w+\\)"
   :parents (list prog-mode-abbrev-table))
 
-(define-abbrev-table 'c-mode-abbrev-table
+(define-abbrev-table 'c-common-abbrev-table
   '(
     ("td" "typedef" nil :system t)
     ("so" "sizeof" nil :system t)
     ("ret" ["return ;" 1 nil nil] expand-abbrev-hook :system t)
-    ("dmax" "#define max(A, B) ((A) > (B) ? (A) : (B))" nil :system t)
+    )
+  :parents (list c-macros-includes-abbrev-table))
+
+(define-abbrev-table 'c-mode-abbrev-table
+  '(
     )
   "C-mode abbrevs."
-  :parents (list c-macros-includes-abbrev-table))
+  :parents (list c-common-abbrev-table))
 
 (define-abbrev-table 'c++-mode-abbrev-table
   '(
@@ -29,7 +35,7 @@
     ("vecp" ["std::vector<std::pair<>>" 2 nil nil] expand-abbrev-hook :system t)
     )
   "C++-mode abbrevs."
-  :parents (list c-macros-includes-abbrev-table))
+  :parents (list c-common-abbrev-table))
 
 (define-abbrev-table 'boost-test-abbrev-table
   '(

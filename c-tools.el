@@ -267,7 +267,8 @@
         (insert "**<")
         (end-of-line)
         (unless (looking-back "\\*/\\s-*" (line-beginning-position))
-          (insert comment-end))))))
+          (delete-horizontal-space)
+          (insert " */"))))))
 
 ;; -------------------------------------------------------------------
 ;;; Yas
