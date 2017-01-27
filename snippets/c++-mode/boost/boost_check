@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: BOOST_CHECK
-# key: bc
-# --
-BOOST_CHECK(${1:condition});

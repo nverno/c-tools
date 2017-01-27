@@ -33,12 +33,17 @@
 ;; -------------------------------------------------------------------
 ;;; Util
 
+(defvar boost-x--version nil)
+
 (eval-when-compile
   (defmacro boost-version-string (arg)
-    `(mapconcat
-      'number-to-string
-      (boost-x--version (and ,arg (read-directory-name "Boost root directory: ")))
-      "_")))
+    `(or boost-x--version
+         (setq boost-x--version
+               (mapconcat
+                'number-to-string
+                (boost-x--version
+                 (and ,arg (read-directory-name "Boost root directory: ")))
+                "_")))))
 
 ;; get current boost version
 (defun boost-x--version (&optional boost-root)

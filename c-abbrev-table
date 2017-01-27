@@ -32,16 +32,23 @@
 
 (define-abbrev-table 'boost-test-abbrev-table
   '(
-    ("bc" "BOOST_CHECK" nil :system t)
-    ("br" "BOOST_REQUIRE" nil :system t)
-    ("bw" "BOOST_WARN" nil :system t)
-    ("bcm" "BOOST_CHECK_MESSAGE" nil :system t)
-    ("bce" "BOOST_CHECK_EQUAL" nil :system t)
-    ("bct" "BOOST_CHECK_THROW" nil :system t)
+    ("bc" ["BOOST_CHECK();" 2 nil nil] expand-abbrev-hook :system t)
+    ("br" ["BOOST_REQUIRE();" 2 nil nil] expand-abbrev-hook :system t)
+    ("bw" ["BOOST_WARN();" 2 nil nil] expand-abbrev-hook :system t)
+
+    ("bcm" ["BOOST_CHECK_MESSAGE();" 2 nil nil] expand-abbrev-hook :system t)
+    ("bct" ["BOOST_CHECK_THROW();" 2 nil nil] expand-abbrev-hook :system t)
+
     ("batc" ["BOOST_AUTO_TEST_CASE(  )" 2 nil nil] expand-abbrev-hook :system t)
     ("bats"
      ["BOOST_AUTO_TEST_SUITE(  )\nBOOST_AUTO_TEST_SUITE_END()" 30 nil nil]
      expand-abbrev-hook :system t)
+    ("bceq" ["BOOST_CHECK_EQUAL();" 2 nil nil] expand-abbrev-hook :system t)
+    ("bcne" ["BOOST_CHECK_NE();" 2 nil nil] expand-abbrev-hook :system t)
+    ("bclt" ["BOOST_CHECK_LT();" 2 nil nil] expand-abbrev-hook :system t)
+    ("breq" ["BOOST_REQUIRE_EQUAL();" 2 nil nil] expand-abbrev-hook :system t)
+    ("brlt" ["BOOST_REQUIRE_LT();" 2 nil nil] expand-abbrev-hook :system t)
+    ("brne" ["BOOST_REQUIRE_NE();" 2 nil nil] expand-abbrev-hook :system t)
     )
   "Boost abbrevs."
   :parents (list c++-mode-abbrev-table))
