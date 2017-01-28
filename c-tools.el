@@ -256,6 +256,9 @@
         (goto-char (point-max))
         (insert (format "\n#endif /* %s */" guard))))))
 
+;; -------------------------------------------------------------------
+;;; Doxygen
+
 (defun c-tools-toggle-doxygen ()
   (interactive)
   (save-excursion
@@ -269,6 +272,13 @@
         (unless (looking-back "\\*/\\s-*" (line-beginning-position))
           (delete-horizontal-space)
           (insert " */"))))))
+
+;; align comment start / end for doxygen region
+(defun c-tools-align-doxygen (beg end)
+  (interactive "*r")
+  (let (indent-tabs-mode align-to-tab-stop)
+    (align-regexp beg end "\\(\\s-*\\)/\\*\\*")
+    (align-regexp beg end "\\(\\s-*\\)\\*/")))
 
 ;; -------------------------------------------------------------------
 ;;; Yas

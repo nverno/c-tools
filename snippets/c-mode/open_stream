@@ -9,7 +9,7 @@ if (argc == 1)
   result = ${3:read_input}( stdin$4 );
 else
   while (result == $2 && --argc) {
-    if ((fp == fopen( *++argv, "r" )) != NULL) {
+    if ((fp = fopen( *++argv, "r" )) != NULL) {
       result = $3( fp$4 );
       fclose(fp);
     } else
