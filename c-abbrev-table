@@ -14,7 +14,6 @@
 (define-abbrev-table 'c-common-abbrev-table
   '(
     ("td" "typedef" nil :system t)
-    ("so" "sizeof" nil :system t)
     ("ret" ["return ;" 1 nil nil] expand-abbrev-hook :system t)
     )
   :parents (list c-macros-includes-abbrev-table))
