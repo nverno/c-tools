@@ -226,7 +226,7 @@
     (nvp-compile-basic)))
 
 ;; compile current file and run it with output to compilation buffer
-(defun c-tools-compile-and-run (keep &optional compiler flags)
+(defun c-tools-compile-and-run (keep &optional compiler flags no-run)
   (interactive "P")
   (let* ((out (concat (file-name-sans-extension
                        (file-name-nondirectory buffer-file-name))
@@ -234,10 +234,15 @@
          (command
           (concat (or compiler (nvp-program "gcc")) " "
                   (or flags "-s -O3") " "
-                  buffer-file-name " -o " out "; ./" out
+                  buffer-file-name " -o " out
+                  (unless no-run (concat "; ./" out))
                   (unless keep (concat "; rm " out)))))
     (setq-local compile-command command)
     (nvp-compile-basic keep)))
+
+(defun c-tools-compile-debug ()
+  (interactive)
+  (c-tools-compile-and-run 'keep nil "-Wall -Werror -ggdb3" 'no-run))
 
 ;; ------------------------------------------------------------
 ;;; Toggle / insert
@@ -274,6 +279,8 @@
           (insert " */"))))))
 
 ;; align comment start / end for doxygen region
+(eval-when-compile
+  (defvar align-to-tab-stop))
 (defun c-tools-align-doxygen (beg end)
   (interactive "*r")
   (let (indent-tabs-mode align-to-tab-stop)
