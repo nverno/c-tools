@@ -35,6 +35,9 @@
 (require 'nvp-test)
 (autoload 'yas-expand "yasnippet")
 
+;; function to run unit test from test buffer
+(defvar c-test-runner 'c-test-default-runner)
+
 ;; -------------------------------------------------------------------
 ;;; Util
 
@@ -119,21 +122,27 @@ test buffer. With prefix, init template for new test."
 
 (eval-when-compile
   (defvar yas-selected-text))
+(declare-function yas-expand-snippet "yasnippet")
+(declare-function yas-lookup-snippet "yasnippet")
 
+;; init new test file
 (defun c-test-init (type &optional source-file)
   (yas-expand-snippet
    (yas-lookup-snippet (concat type "_init") 'c-mode)
    nil nil
-   `((include-file ,(file-name-nondirectory source-file)))))
+   `((include-file ,(file-relative-name source-file)))))
 
-(defun c-test-buffer (type)
+;; called when opening a test buffer
+(defun c-test-buffer (type &optional runner)
+  (setq-local c-test-runner runner)
   (setup-c-test-buffer type))
 
 ;;;###autoload(autoload 'nvp-project-c-unity-setup "c-test")
 (nvp-define-project c-unity
   :test-fmt "test_%s"
   :test-init-function (apply-partially 'c-test-init "unity")
-  :test-buffer-function (apply-partially 'c-test-buffer "unity"))
+  :test-buffer-function (apply-partially 'c-test-buffer
+                                         "unity" 'c-test-run-unity-test))
 
 (nvp-define-project c-check
   :test-fmt "test_%s"
@@ -148,8 +157,19 @@ test buffer. With prefix, init template for new test."
 ;; -------------------------------------------------------------------
 ;;; Commands
 
-;; command to run unit test
-(c-test-runner-fn c-test-run-unit-test nil "-std=c11 -O2 -s")
+(defun c-test-run-unit-test (arg)
+  (interactive "P")
+  (funcall-interactively c-test-runner arg))
+
+;; commands to run unit test
+(c-test-runner-fn c-test-default-runner nil
+  "-Werror -Wall -std=c11 -O2 -s -DTEST -I.")
+
+(c-test-runner-fn c-test-run-unity-test nil
+  (concat
+   "-Werror -Wall -std=c11 -O2 -s -DTEST -I. -I"
+   (expand-file-name "unity/src/" (getenv "C_INCLUDE_PATH")) " "
+   (expand-file-name "unity/src/unity.c" (getenv "C_INCLUDE_PATH"))))
 
 (defun c-test-help-online ()
   (interactive)
