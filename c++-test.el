@@ -50,13 +50,24 @@
       (nvp-with-local-bindings
         ("C-c C-c" . c++-test-run-unit-test)))))
 
-;; init new test dir / unit test file
-(defun c++-test-init (&optional dir)
-  (with-c-test-file "test.cpp" dir
-    (setup-c++-test-buffer)
-    (insert "boost_init")
-    (pop-to-buffer (current-buffer))
+;; -------------------------------------------------------------------
+;;; Setup
+
+(defun c++-test-init ()
+  (insert "boost_init")
+  (call-interactively 'yas-expand))
+
+;; if new expand template for new test
+(defun c++-test-buffer (&optional new)
+  (setup-c++-test-buffer)
+  (when (or current-prefix-arg new)
+    (goto-char (point-max))
+    (insert "\nbatc")
     (call-interactively 'yas-expand)))
+
+(nvp-define-project c++-boost
+  :test-init-function 'c++-test-init
+  :test-buffer-function 'c++-test-buffer)
 
 ;; -------------------------------------------------------------------
 ;;; Commands 
@@ -65,18 +76,11 @@
   (interactive)
   (browse-url "https://github.com/jsankey/boost.test-examples/"))
 
-(c-test-fns 'c++
+(c-test-runner-fn c++-test-run-unit-test 'c++
   ;; flags
-  "-std=c++14 -O3 -s -o"
+  "-std=c++14 -O3 -s"
   ;; link
-  "-lboost_unit_test_framework"
-  ;; the rest inits a new test case when jumping with prefix
-  (goto-char (point-max))
-  (insert "\nbatc")
-  (call-interactively 'yas-expand))
-
-;;;###autoload(autoload 'c++-test-jump-to-test "c++-test")
-;;;###autoload(autoload 'c++-test-run-unit-tests "c++-test")
+  "-lboost_unit_test_framework")
 
 (provide 'c++-test)
 ;;; c++-test.el ends here

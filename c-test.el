@@ -47,11 +47,10 @@
        ,@body))
 
   ;; locally set keys in test buffers to run tests
-  (defmacro setup-c-test-buffer (&optional cunit)
+  (defmacro setup-c-test-buffer (type)
     `(progn
-       (setq-local local-abbrev-table ,(if cunit 'cunit-abbrev-table
-                                         'check-abbrev-table))
-       (setq-local nvp-abbrev-local-table ,(if cunit "cunit" "check"))
+       (setq-local local-abbrev-table (intern (concat ,type "-abbrev-table")))
+       (setq-local nvp-abbrev-local-table ,type)
        (nvp-with-local-bindings
          ("C-c C-c" . c-test-run-unit-test))))
 
@@ -76,7 +75,7 @@
                  (concat
                   (nvp-concat
                    (nvp-program ,(if c++ "g++" "gcc")) " " ,flags " ")
-                  out " " (file-name-nondirectory buffer-file-name) " "
+                  " -o " out " " (file-name-nondirectory buffer-file-name) " "
                   (nvp-concat ,libs "; ./")
                   out (and (not keep) (concat "; rm " out))))
                 (compilation-read-command nil))
@@ -100,40 +99,47 @@
           "Run unit tests in test directory. If more than one test, prompts for
 test file. With prefix, doesn't remove compiled test after running."
           (interactive "P")
-          (,with-vars (nvp-with-test nil (funcall ',run1-fn arg))))
+          (,with-vars (nvp-with-test 'local 'create nil nil nil
+                        (funcall ',run1-fn arg))))
 
         (defun ,jump-fn (arg)
           "Jump to tests in test directory, activating test abbrev table in 
 test buffer. With prefix, init template for new test."
           (interactive "P")
           (,with-vars
-           (nvp-with-test (funcall ',init-fn)
-             (,setup)
+           (nvp-with-test 'local 'create (funcall ',init-fn) nil nil
+             (,setup "cunit")
              (pop-to-buffer (current-buffer))
              (when arg
                ,@body))))))))
 
-;; init new test dir / unit test file
-(defun c-test-init (&optional cunit dir)
-  (with-c-test-file "test.c" dir
-    (setup-c-test-buffer)
-    (insert (if cunit "cunit_init" "check_init"))
-    (pop-to-buffer (current-buffer))
-    (call-interactively 'yas-expand)))
+;; -------------------------------------------------------------------
+;;; Setup
+
+(defun c-test-init (type)
+  (insert (concat type "_init"))
+  (call-interactively 'yas-expand))
+
+(defun c-test-buffer (type)
+  (setup-c-test-buffer type))
+
+(nvp-define-project c-unity
+  :test-init-function (apply-partially 'c-test-init "unity")
+  :test-buffer-function (apply-partially 'c-test-buffer "unity"))
+
+(nvp-define-project c-check
+  :test-init-function (apply-partially 'c-test-init "check")
+  :test-buffer-function (apply-partially 'c-test-buffer "check"))
+
+(nvp-define-project c-cunit
+  :test-init-function (apply-partially 'c-test-init "cunit")
+  :test-buffer-function (apply-partially 'c-test-buffer "cunit"))
 
 ;; -------------------------------------------------------------------
 ;;; Commands
 
-(c-test-fns nil
-  ;; flags
-  "-std=c11 -O2 -s -o"
-  ;; link
-  nil
-  ;; init new test case
-  (insert "In progress\n"))
-
-;;;###autoload(autoload 'c-test-jump-to-test "c-test")
-;;;###autoload(autoload 'c-test-run-unit-tests "c-test")
+;; command to run unit test
+(c-test-runner-fn c-test-run-unit-test nil "-std=c11 -02 -s")
 
 (defun c-test-help-online ()
   (interactive)

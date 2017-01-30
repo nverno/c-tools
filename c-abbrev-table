@@ -71,3 +71,8 @@
   '()
   "CUnit abbrevs."
   :parents (list c-mode-abbrev-table))
+
+(define-abbrev-table 'unity-abbrev-table
+  '()
+  "Unity abbrevs."
+  :parents (list c-mode-abbrev-table))
