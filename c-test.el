@@ -117,9 +117,14 @@ test buffer. With prefix, init template for new test."
 ;; -------------------------------------------------------------------
 ;;; Setup
 
-(defun c-test-init (type)
-  (insert (concat type "_init"))
-  (call-interactively 'yas-expand))
+(eval-when-compile
+  (defvar yas-selected-text))
+
+(defun c-test-init (type &optional source-file)
+  (yas-expand-snippet
+   (yas-lookup-snippet (concat type "_init") 'c-mode)
+   nil nil
+   `((include-file ,(file-name-nondirectory source-file)))))
 
 (defun c-test-buffer (type)
   (setup-c-test-buffer type))
