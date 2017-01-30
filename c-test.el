@@ -123,15 +123,19 @@ test buffer. With prefix, init template for new test."
 (defun c-test-buffer (type)
   (setup-c-test-buffer type))
 
+;;;###autoload(autoload 'nvp-project-c-unity-setup "c-test")
 (nvp-define-project c-unity
+  :test-fmt "test_%s"
   :test-init-function (apply-partially 'c-test-init "unity")
   :test-buffer-function (apply-partially 'c-test-buffer "unity"))
 
 (nvp-define-project c-check
+  :test-fmt "test_%s"
   :test-init-function (apply-partially 'c-test-init "check")
   :test-buffer-function (apply-partially 'c-test-buffer "check"))
 
 (nvp-define-project c-cunit
+  :test-fmt "test_%s"
   :test-init-function (apply-partially 'c-test-init "cunit")
   :test-buffer-function (apply-partially 'c-test-buffer "cunit"))
 
