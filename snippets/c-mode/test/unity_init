@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: unity_init
+# key: unity_init
+# --
+#include "unity.h"
+
+void test_${1:name}(void) {
+  $0
+}
+
+int main(void) {
+  UNITY_BEGIN();
+
+  RUN_TEST( test_$1 );
+
+  return UNITY_END();
+}

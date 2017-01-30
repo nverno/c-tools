@@ -73,6 +73,8 @@
   :parents (list c-mode-abbrev-table))
 
 (define-abbrev-table 'unity-abbrev-table
-  '()
+  '(
+    ("tae" ["TEST_ASSERT_EQUAL();" 2 nil nil] expand-abbrev-hook :system t)
+    )
   "Unity abbrevs."
   :parents (list c-mode-abbrev-table))

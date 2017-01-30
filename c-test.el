@@ -49,7 +49,8 @@
   ;; locally set keys in test buffers to run tests
   (defmacro setup-c-test-buffer (type)
     `(progn
-       (setq-local local-abbrev-table (intern (concat ,type "-abbrev-table")))
+       (setq-local local-abbrev-table (symbol-value
+                                       (intern (concat ,type "-abbrev-table"))))
        (setq-local nvp-abbrev-local-table ,type)
        (nvp-with-local-bindings
          ("C-c C-c" . c-test-run-unit-test))))
@@ -143,7 +144,7 @@ test buffer. With prefix, init template for new test."
 ;;; Commands
 
 ;; command to run unit test
-(c-test-runner-fn c-test-run-unit-test nil "-std=c11 -02 -s")
+(c-test-runner-fn c-test-run-unit-test nil "-std=c11 -O2 -s")
 
 (defun c-test-help-online ()
   (interactive)
