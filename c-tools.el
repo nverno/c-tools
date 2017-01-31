@@ -238,11 +238,11 @@
                   (unless no-run (concat "; ./" out))
                   (unless keep (concat "; rm " out)))))
     (setq-local compile-command command)
-    (nvp-compile-basic keep)))
+    (call-interactively 'nvp-compile-basic)))
 
 (defun c-tools-compile-debug ()
   (interactive)
-  (c-tools-compile-and-run 'keep nil "-Wall -Werror -ggdb3" 'no-run))
+  (c-tools-compile-and-run 'keep nil "-Wall -Werror -ggdb3 -DDEBUG" 'no-run))
 
 ;; ------------------------------------------------------------
 ;;; Toggle / insert
