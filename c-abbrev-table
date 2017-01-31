@@ -74,7 +74,8 @@
 
 (define-abbrev-table 'unity-abbrev-table
   '(
-    ("tae" ["TEST_ASSERT_EQUAL();" 2 nil nil] expand-abbrev-hook :system t)
+    ("rt" ["RUN_TEST(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("tae" ["TEST_ASSERT_EQUAL(  );" 3 nil nil] expand-abbrev-hook :system t)
     )
   "Unity abbrevs."
   :parents (list c-mode-abbrev-table))
