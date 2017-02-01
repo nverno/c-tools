@@ -55,18 +55,23 @@
   (defmacro c-test-runner-fn (name &optional c++ flags libs)
     (declare (indent defun))
     (let ((fn (nvp-string-or-symbol name)))
-      `(defun ,fn (&optional keep)
+      `(defun ,fn (&optional keep file)
+         "Run tests in current buffer or FILE. Don't throw away executable if KEEP
+is non-nil."
          (interactive "P")
          (let* ((out (concat (nvp-bfn) (nvp-with-gnu/w32 ".out" ".exe")))
                 (compile-command
                  (concat
                   (nvp-concat
                    (nvp-program ,(if c++ "g++" "gcc")) " " ,flags " ")
-                  " -o " out " " (file-name-nondirectory buffer-file-name) " "
-                  (nvp-concat ,libs "; ./")
+                  " -o " out " " (file-name-nondirectory (or file buffer-file-name))
+                  " " (nvp-concat ,libs "; ./")
                   out (and (not keep) (concat "; rm " out))))
                 (compilation-read-command nil))
-           (call-interactively 'compile)))))
+           (if file
+               (with-current-buffer file
+                 (call-interactively 'compile))
+             (call-interactively 'compile))))))
 
   ;; assume first path will be root, eg ~/.local/include:etc
   (defmacro c-local-include-path (path)
