@@ -1,0 +1,7 @@
+# -*- mode: snippet; -*-
+# name: #ifdef TEST
+# key: ift
+# --
+#ifdef TEST
+  $0
+#endif /* TEST */
