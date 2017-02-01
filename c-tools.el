@@ -50,7 +50,6 @@
 ;;; TODO:
 ;; - Need help-at-point function for std library business
 ;; - add .local includes to global clang config
-;; - Run corresponding unit tests from source file
 ;; - get buffer info from semantic - includes
 
 ;; -------------------------------------------------------------------

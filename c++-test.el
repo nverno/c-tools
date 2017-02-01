@@ -69,7 +69,8 @@
 (nvp-define-project c++-boost
   :test-fmt "test_%s"
   :test-init-function 'c++-test-init
-  :test-buffer-function 'c++-test-buffer)
+  :test-buffer-function 'c++-test-buffer
+  :test-run-unit-function 'c++-test-run-unit-test)
 
 ;; -------------------------------------------------------------------
 ;;; Commands 

@@ -31,9 +31,13 @@
   (require 'cl-lib)
   (defvar check-abbrev-table)
   (defvar cunit-abbrev-table)
+  (defvar unity-abbrev-table)
   (defvar nvp-abbrev-local-table))
 (require 'nvp-test)
 (autoload 'yas-expand "yasnippet")
+
+;;; TODO:
+;; - Generate test abbrevs from macros in header files
 
 ;; function to run unit test from test buffer
 (defvar c-test-runner 'c-test-default-runner)
@@ -52,26 +56,28 @@
          ("C-c C-c" . c-test-run-unit-test))))
 
   ;; generate function to run unit tests
+  ;; Runs tests in current buffer or FILE if non-nil
   (defmacro c-test-runner-fn (name &optional c++ flags libs)
     (declare (indent defun))
     (let ((fn (nvp-string-or-symbol name)))
-      `(defun ,fn (&optional keep file)
+      `(defun ,fn (&optional file keep)
          "Run tests in current buffer or FILE. Don't throw away executable if KEEP
 is non-nil."
-         (interactive "P")
-         (let* ((out (concat (nvp-bfn) (nvp-with-gnu/w32 ".out" ".exe")))
+         (interactive)
+         (let* ((default-directory (if file (file-name-directory file)
+                                     default-directory))
+                (out (concat (file-name-sans-extension
+                              (or file (buffer-file-name)))
+                             (nvp-with-gnu/w32 ".out" ".exe")))
                 (compile-command
                  (concat
                   (nvp-concat
                    (nvp-program ,(if c++ "g++" "gcc")) " " ,flags " ")
-                  " -o " out " " (file-name-nondirectory (or file buffer-file-name))
-                  " " (nvp-concat ,libs "; ./")
-                  out (and (not keep) (concat "; rm " out))))
+                  " -o " out " " (or file buffer-file-name) " "
+                  (nvp-concat ,libs "; ./") (file-name-nondirectory out)
+                  (and (not keep) (concat "; rm " out))))
                 (compilation-read-command nil))
-           (if file
-               (with-current-buffer file
-                 (call-interactively 'compile))
-             (call-interactively 'compile))))))
+           (call-interactively 'compile)))))
 
   ;; assume first path will be root, eg ~/.local/include:etc
   (defmacro c-local-include-path (path)
@@ -120,17 +126,20 @@ is non-nil."
   :test-fmt "test_%s"
   :test-init-function (apply-partially 'c-test-init "unity")
   :test-buffer-function (apply-partially 'c-test-buffer
-                                         "unity" 'c-test-run-unity-test))
+                                         "unity" 'c-test-run-unity-test)
+  :test-run-unit-function 'c-test-run-unity-test)
 
 (nvp-define-project c-check
   :test-fmt "test_%s"
   :test-init-function (apply-partially 'c-test-init "check")
-  :test-buffer-function (apply-partially 'c-test-buffer "check"))
+  :test-buffer-function (apply-partially 'c-test-buffer "check")
+  :test-run-unit-function 'c-test-default-runner)
 
 (nvp-define-project c-cunit
   :test-fmt "test_%s"
   :test-init-function (apply-partially 'c-test-init "cunit")
-  :test-buffer-function (apply-partially 'c-test-buffer "cunit"))
+  :test-buffer-function (apply-partially 'c-test-buffer "cunit")
+  :test-run-unit-function 'c-test-default-runner)
 
 ;; -------------------------------------------------------------------
 ;;; Commands
