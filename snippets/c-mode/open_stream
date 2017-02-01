@@ -2,8 +2,8 @@
 # name: open stream
 # key: opens
 # --
-FILE *${1:fp};             // input stream
-int result = ${2:SUCCESS}; // exit status
+FILE *${1:fp};                  // input stream
+int result = ${2:EXIT_SUCCESS}; // exit status
 
 if (argc == 1)
   result = ${3:read_input}( stdin$4 );
@@ -13,5 +13,5 @@ else
       result = $3( fp$4 );
       fclose(fp);
     } else
-      result = ERROR;
+      result = EXIT_FAILURE;
   }

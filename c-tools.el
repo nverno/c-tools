@@ -47,6 +47,12 @@
 (nvp-package-dir c-tools--dir)
 (nvp-package-load-snippets c-tools--dir)
 
+;;; TODO:
+;; - Need help-at-point function for std library business
+;; - Fix paths for macrostepping local includes, eg. unity
+;; - add .local includes to global clang config
+;; - Run corresponding unit tests from source file
+
 ;; -------------------------------------------------------------------
 ;;; Util
 
@@ -178,6 +184,17 @@
   (unless (eq (char-before) ?\;)
     (insert ";"))
   (newline-and-indent))
+
+;;;-- Marking --
+
+(defun c-tools-mark-defun ()
+  (interactive)
+  (nvp-mark-defun
+   ;; mark function on first invoke
+   (c-mark-function)
+   ;; successively extend to next functions
+   (c-beginning-of-defun -1)
+   (point)))
 
 ;;; Generate clang complete files
 ;; https://github.com/Rip-Rip/clang_complete/wiki
