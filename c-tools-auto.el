@@ -28,24 +28,30 @@
 ;;; Code:
 (eval-when-compile
   (require 'nvp-macro))
+(require 'nvp-indicate)
 (require 'gud)
 
 ;;;###autoload
 (defun c-tools-gud-switch ()
   (interactive)
-  (pop-to-buffer gud-comint-buffer))
+  (if gud-comint-buffer
+      (pop-to-buffer gud-comint-buffer)
+    (user-error "No gud buffer")))
 
 ;;; Help menu
 
 (when (require 'hydra nil t)
+ 
   (nvp-bindings "c-mode" 'cc-mode
-    ("C-M-g" . c-tools-gud-hydra/body))
+    ("<f2> d g" . c-tools-gud-hydra/body))
   (nvp-bindings "c++-mode" 'cc-mode
-    ("C-M-g" . c-tools-gud-hydra/body))
-
+    ("<f2> d g" . c-tools-gud-hydra/body))
+  
   ;; compiler doesnt understande these functions
   (with-no-warnings
-    (defhydra c-tools-gud-hydra (:color amaranth)
+    (defhydra c-tools-gud-hydra (:color amaranth
+                                        :pre nvp-indicate-hydra-pre
+                                        :post nvp-indicate-hydra-post)
       ;; vi
       ("h" backward-char)
       ("j" next-line)
@@ -61,7 +67,8 @@
       ("c" gud-cont "cont")
       ("o" gud-finish "out")
       ("r" gud-run "run")
-      ("q" nil "quit"))))
+      ("q" nil "quit"))
+    (hydra-set-property 'c-tools-gud-hydra :verbosity 1)))
 
 (provide 'c-tools-auto)
 ;;; c-tools-auto.el ends here
