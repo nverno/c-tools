@@ -20,6 +20,7 @@
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
+    ("st" "size_t" nil :system t)
     ("null" "NULL" nil :system t)
     )
   "C-mode abbrevs."
@@ -75,7 +76,28 @@
 (define-abbrev-table 'unity-abbrev-table
   '(
     ("rt" ["RUN_TEST(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("tf" ["TEST_FAIL(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("ti" ["TEST_IGNORE(  );" 3 nil nil] expand-abbrev-hook :system t)
+
+    ;; test_asserts
+    ("ta" ["TEST_ASSERT(  );" 3 nil nil] expand-abbrev-hook :system t)
     ("tae" ["TEST_ASSERT_EQUAL(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("tane" ["TEST_ASSERT_NOT_EQUAL(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("taf" ["TEST_ASSERT_FALSE(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("tan" ["TEST_ASSERT_NULL(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("tann" ["TEST_ASSERT_NOT_NULL(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("tat" ["TEST_ASSERT_TRUE(  );" 3 nil nil] expand-abbrev-hook :system t)
+
+    ;; strings/structs
+    ("taep" ["TEST_ASSERT_EQUAL_PTR(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("taes" ["TEST_ASSERT_EQUAL_STRING(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("taem" ["TEST_ASSERT_EQUAL_MEMORY(  );" 3 nil nil] expand-abbrev-hook :system t)
+
+    ;; ints/floats/doubles
+    ("taiw" ["TEST_ASSERT_INT_WITHIN(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("tadw" ["TEST_ASSERT_DOUBLE_WITHIN(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("taef" ["TEST_ASSERT_EQUAL_FLOAT(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("taed" ["TEST_ASSERT_EQUAL_DOUBLE(  );" 3 nil nil] expand-abbrev-hook :system t)
     )
   "Unity abbrevs."
   :parents (list c-mode-abbrev-table))
