@@ -49,7 +49,6 @@
 
 ;;; TODO:
 ;; - Need help-at-point function for std library business
-;; - Fix paths for macrostepping local includes, eg. unity
 ;; - add .local includes to global clang config
 ;; - Run corresponding unit tests from source file
 

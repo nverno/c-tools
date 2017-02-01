@@ -42,13 +42,6 @@
 ;;; Util
 
 (eval-when-compile
-  ;; setup mode specific dynamic variables
-  (defmacro with-c-vars (&rest body)
-    (declare (indent defun))
-    `(nvp-with-project (:test-re ".*\\(?:test\\|check\\).*\.c"
-                                 :root '("test" "tests" ".git" ".projectile"))
-       ,@body))
-
   ;; locally set keys in test buffers to run tests
   (defmacro setup-c-test-buffer (type)
     `(progn
@@ -57,16 +50,6 @@
        (setq-local nvp-abbrev-local-table ,type)
        (nvp-with-local-bindings
          ("C-c C-c" . c-test-run-unit-test))))
-
-  ;; do BODY in test file, creating new test directory/file if necessary
-  (defmacro with-c-test-file (filename dirname &rest body)
-    (declare (indent defun))
-    `(let* ((test-dir (or ,dirname (expand-file-name "test" default-directory)))
-            (test-file (expand-file-name ,filename test-dir)))
-       (unless (file-exists-p test-file)
-         (make-directory test-dir 'parents)
-         (with-current-buffer (find-file-other-window test-file)
-           ,@body))))
 
   ;; generate function to run unit tests
   (defmacro c-test-runner-fn (name &optional c++ flags libs)
@@ -85,40 +68,29 @@
                 (compilation-read-command nil))
            (call-interactively 'compile)))))
 
-  ;; generate functions to run unit tests/jump to tests.
-  ;; BODY runs when jumping to test with prefix (eg. init a template)
-  (defmacro c-test-fns (&optional c++ flags libs &rest body)
-    (declare (indent defun))
-    (let* ((prefix (if c++ "c++-" "c-"))
-           (run1-fn (intern (concat prefix "test-run-unit-test")))
-           (run-fn (intern (concat prefix "test-run-unit-tests")))
-           (jump-fn (intern (concat prefix "test-jump-to-test")))
-           (init-fn (intern (concat prefix "test-init")))
-           (with-vars (intern (concat "with-" prefix "vars")))
-           (setup (intern (concat "setup-" prefix "test-buffer"))))
-     `(progn
-        (c-test-runner-fn ,run1-fn ,c++ ,flags ,libs)
-
-        (defun ,run-fn (arg)
-          "Run unit tests in test directory. If more than one test, prompts for
-test file. With prefix, doesn't remove compiled test after running."
-          (interactive "P")
-          (,with-vars (nvp-with-test 'local 'create nil nil nil
-                        (funcall ',run1-fn arg))))
-
-        (defun ,jump-fn (arg)
-          "Jump to tests in test directory, activating test abbrev table in 
-test buffer. With prefix, init template for new test."
-          (interactive "P")
-          (,with-vars
-           (nvp-with-test 'local 'create (funcall ',init-fn) nil nil
-             (,setup "cunit")
-             (pop-to-buffer (current-buffer))
-             (when arg
-               ,@body))))))))
+  ;; assume first path will be root, eg ~/.local/include:etc
+  (defmacro c-local-include-path (path)
+    `(expand-file-name
+      ,path
+      (car (split-string (getenv "C_INCLUDE_PATH") path-separator t " ")))))
 
 ;; -------------------------------------------------------------------
-;;; Setup
+;;; Environment / Paths
+
+;; set environment stuff
+(defun c-test-setenv (type)
+  (pcase type
+    (`"unity"
+     ;; add path to unity source to macroexpand all the shittles
+     (let ((env (getenv "C_INCLUDE_PATH")))
+       (unless (string-match-p "unity" env)
+         (setenv "C_INCLUDE_PATH"
+                 (concat env ":" (expand-file-name
+                                  ".local/include/unity/src" (getenv "HOME")))))))
+    (_ ())))
+
+;; -------------------------------------------------------------------
+;;; Setup Tests
 
 (eval-when-compile
   (defvar yas-selected-text))
@@ -127,6 +99,7 @@ test buffer. With prefix, init template for new test."
 
 ;; init new test file
 (defun c-test-init (type &optional source-file)
+  (c-test-setenv type)
   (yas-expand-snippet
    (yas-lookup-snippet (concat type "_init") 'c-mode)
    nil nil
@@ -168,8 +141,8 @@ test buffer. With prefix, init template for new test."
 (c-test-runner-fn c-test-run-unity-test nil
   (concat
    "-Werror -Wall -std=c11 -O2 -s -DTEST -I. -I"
-   (expand-file-name "unity/src/" (getenv "C_INCLUDE_PATH")) " "
-   (expand-file-name "unity/src/unity.c" (getenv "C_INCLUDE_PATH"))))
+   (c-local-include-path "unity/src") " "
+   (c-local-include-path "unity/src/unity.c")))
 
 (defun c-test-help-online ()
   (interactive)

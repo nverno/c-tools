@@ -51,7 +51,7 @@
         ("C-c C-c" . c++-test-run-unit-test)))))
 
 ;; -------------------------------------------------------------------
-;;; Setup
+;;; Setup Test
 
 (defun c++-test-init ()
   (insert "boost_init")
