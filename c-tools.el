@@ -47,10 +47,8 @@
 (nvp-package-dir c-tools--dir)
 (nvp-package-load-snippets c-tools--dir)
 
-;;; TODO:
-;; - Need help-at-point function for std library business
-;; - add .local includes to global clang config
-;; - get buffer info from semantic - includes
+(defvar-local c-tools-local-include-paths nil)
+(setq-default c-tools-local-include-paths '("." ".." "../include"))
 
 ;; -------------------------------------------------------------------
 ;;; Util
@@ -198,7 +196,17 @@
 ;;; Generate clang complete files
 ;; https://github.com/Rip-Rip/clang_complete/wiki
 ;; discusses making pre-compiled headers for clang_complete
-(defvar-local c-tools-local-include-paths nil)
+(defsubst c-tools-clang-default-includes (mode &optional system)
+  (append
+   (split-string
+    (getenv (if (eq mode 'c-mode) "C_INCLUDE_PATH" "CPLUS_INCLUDE_PATH"))
+    path-separator)
+   (and (not system)
+        (bound-and-true-p c-tools-local-include-paths))
+   (if (eq mode 'c-mode)
+       (bound-and-true-p c-tools-clang-c-include-dirs)
+     (bound-and-true-p c-tools-c++-include-dirs))))
+
 (defun c-tools-clang-complete (arg &optional paths)
   (interactive "P")
   (unless (bound-and-true-p c-tools-clang-c-include-dirs)
@@ -210,13 +218,8 @@
             (mapconcat
              'identity
              `("-DDEBUG"
-               ,@(includes (or paths
-                               (bound-and-true-p c-tools-local-include-paths)))
-               ,@(includes (if (eq major-mode 'c-mode)
-                               (bound-and-true-p
-                                c-tools-clang-c-include-dirs)
-                             (bound-and-true-p
-                              c-tools-clang-c++-include-dirs))))
+               "-DTEST"
+               ,@(includes (or paths (c-tools-clang-default-includes major-mode))))
              "\n"))
           (file (expand-file-name ".clang_complete" default-directory)))
       (when arg
@@ -224,8 +227,9 @@
                     ".clang_complete"
                     (read-directory-name
                      "Directory to make .clang_complete: " file))))
-      (with-temp-file file
-        (insert default)))))
+      (unless (file-exists-p file)
+        (with-temp-file file
+          (insert default))))))
 
 ;;; Compile
 

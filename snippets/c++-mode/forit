@@ -2,6 +2,6 @@
 # name: forit
 # key: forit
 # --
-for (${1:auto it} = ${2:var}.begin(); ${1:$(c-yas-var)} != $2.end(); ${1:$(c-yas-var)}++) ${3:{
+for (${1:auto it} = ${2:var}.${3:begin}(); ${1:$(c-yas-var)} != $2.${3:$(if (string= yas-text "begin") "end" "begin")}(); ${1:$(c-yas-var)}++) ${4:{
   $0
 }}
