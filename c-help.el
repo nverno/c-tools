@@ -29,40 +29,35 @@
 (eval-when-compile
   (require 'nvp-macro)
   (require 'cl-lib))
+(require 'semantic/analyze)
 
+;; sources determined by source file paths
 (defvar c-help-sources
-  '(("/usr/local/")))
+  (let ((uri "http://en.cppreference.com/mwiki/index.php?title=Special:Search&search=%s"))
+    (cl-loop for p in semantic-c-dependency-system-include-path
+       collect (cons p uri))))
 
 ;; semantic tag at point
 (defsubst c-help-tag-at (point)
   (car (reverse (oref (semantic-analyze-current-context point) prefix))))
 
-;; get info on thing at point
-(defun c-help-at-point (point)
+;; lookup info in man or online for thing at point
+;;;###autoload
+(defun c-help-at-point (point &optional online)
   (interactive "d")
-  (let ((tag (c-help-tag-at point))
-        file type)
-    (when tag
-      (setq type (semantic-tag-class tag))
-      (setq file (semantic-tag-file-name tag))
-      )))
-
-(defun c-help-type-at (point)
-  (let* ((ctxt (semantic-analyze-current-context point))
-	 (pf (reverse (oref ctxt prefix)))
-	 (lastname (pop pf))
-	 (tag (if (semantic-tag-p lastname) lastname (caar pf)))
-	 (names (append
-		 (when (semantic-tag-p tag)
-		   (save-excursion
-		     (when (semantic-tag-with-position-p tag)
-		       (set-buffer (semantic-tag-buffer tag))
-		       (semantic-go-to-tag tag)
-		       (mapcar 'semantic-tag-name
-                               (semantic-analyze-scope-nested-tags (point) nil)))))
-		 (list (if (semantic-tag-p lastname) (semantic-tag-name lastname)
-                         lastname)))))
-    (concat (mapconcat 'concat names "::"))))
+  (let* ((tag (c-help-tag-at point))
+         (file (and (semantic-tag-p tag)
+                    (semantic-tag-file-name tag)))
+         (ref (when (stringp file)
+                (cl-some (lambda (src)
+                           (and (string-prefix-p (car src) file)
+                                src))
+                         c-help-sources))))
+    (if (not ref)
+        (message "No documentation source found for %S" tag)
+      (if (or online current-prefix-arg)
+          (browse-url (format (cdr ref) (semantic-tag-name tag)))
+        (man (semantic-tag-name tag))))))
 
 (provide 'c-help)
 ;;; c-help.el ends here
