@@ -114,7 +114,7 @@ is non-nil."
   (c-test-setenv type)
   ;; call after setting test environment to get paths to unit testing
   ;; framework included
-  (clang-complete-create-or-update nil 'c-mode '(("-D" "TEST")))
+  (clang-complete-create-or-update nil 'c-mode '(("-D" . "TEST")))
   (yas-expand-snippet
    (yas-lookup-snippet (concat type "_init") 'c-mode)
    nil nil
