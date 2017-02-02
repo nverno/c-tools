@@ -35,6 +35,7 @@
   (defvar nvp-abbrev-local-table))
 (require 'nvp-test)
 (autoload 'yas-expand "yasnippet")
+(autoload 'c-tools-clang-complete "c-tools")
 
 ;;; TODO:
 ;; - Generate test abbrevs from macros in header files
@@ -111,6 +112,9 @@ is non-nil."
 ;; init new test file
 (defun c-test-init (type &optional source-file)
   (c-test-setenv type)
+  ;; call after setting test environment to get paths to unit testing
+  ;; framework included
+  (clang-complete-create-or-update nil 'c-mode '(("-D" "TEST")))
   (yas-expand-snippet
    (yas-lookup-snippet (concat type "_init") 'c-mode)
    nil nil

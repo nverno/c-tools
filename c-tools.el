@@ -33,11 +33,7 @@
   (require 'cl-lib)
   (require 'nvp-macro)
   (defvar gud-comint-buffer)
-  (defvar irony-server-install-prefix)
-  (defvar nvp-c-include-dirs)
-  (defvar nvp-c++-include-dirs)
-  (defvar nvp-clang-c-include-dirs)
-  (defvar nvp-clang-c++-include-dirs))
+  (defvar irony-server-install-prefix))
 (autoload 'nvp-log "nvp-log")
 (autoload 'nvp-ext-sudo-command "nvp-ext")
 (autoload 'nvp-compile-basic "nvp-compile")
@@ -46,9 +42,6 @@
 
 (nvp-package-dir c-tools--dir)
 (nvp-package-load-snippets c-tools--dir)
-
-(defvar-local c-tools-local-include-paths nil)
-(setq-default c-tools-local-include-paths '("." ".." "../include"))
 
 ;; -------------------------------------------------------------------
 ;;; Util
@@ -192,44 +185,6 @@
    ;; successively extend to next functions
    (c-beginning-of-defun -1)
    (point)))
-
-;;; Generate clang complete files
-;; https://github.com/Rip-Rip/clang_complete/wiki
-;; discusses making pre-compiled headers for clang_complete
-(defsubst c-tools-clang-default-includes (mode &optional system)
-  (append
-   (split-string
-    (getenv (if (eq mode 'c-mode) "C_INCLUDE_PATH" "CPLUS_INCLUDE_PATH"))
-    path-separator)
-   (and (not system)
-        (bound-and-true-p c-tools-local-include-paths))
-   (if (eq mode 'c-mode)
-       (bound-and-true-p c-tools-clang-c-include-dirs)
-     (bound-and-true-p c-tools-c++-include-dirs))))
-
-(defun c-tools-clang-complete (arg &optional paths)
-  (interactive "P")
-  (unless (bound-and-true-p c-tools-clang-c-include-dirs)
-    (when (not (require 'c-tools-include "c-tools-include" t))
-      (nvp-log "c-tools-include not found, running c-tools install.")
-      (c-tools-install nil)))
-  (cl-flet ((includes (lst) (mapcar #'(lambda (x) (concat "-I" x)) lst)))
-    (let ((default
-            (mapconcat
-             'identity
-             `("-DDEBUG"
-               "-DTEST"
-               ,@(includes (or paths (c-tools-clang-default-includes major-mode))))
-             "\n"))
-          (file (expand-file-name ".clang_complete" default-directory)))
-      (when arg
-        (setq file (expand-file-name
-                    ".clang_complete"
-                    (read-directory-name
-                     "Directory to make .clang_complete: " file))))
-      (unless (file-exists-p file)
-        (with-temp-file file
-          (insert default))))))
 
 ;;; Compile
 

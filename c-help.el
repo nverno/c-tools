@@ -30,6 +30,9 @@
   (require 'nvp-macro)
   (require 'cl-lib))
 
+(defvar c-help-sources
+  '(("/usr/local/")))
+
 ;; semantic tag at point
 (defsubst c-help-tag-at (point)
   (car (reverse (oref (semantic-analyze-current-context point) prefix))))
@@ -43,6 +46,23 @@
       (setq type (semantic-tag-class tag))
       (setq file (semantic-tag-file-name tag))
       )))
+
+(defun c-help-type-at (point)
+  (let* ((ctxt (semantic-analyze-current-context point))
+	 (pf (reverse (oref ctxt prefix)))
+	 (lastname (pop pf))
+	 (tag (if (semantic-tag-p lastname) lastname (caar pf)))
+	 (names (append
+		 (when (semantic-tag-p tag)
+		   (save-excursion
+		     (when (semantic-tag-with-position-p tag)
+		       (set-buffer (semantic-tag-buffer tag))
+		       (semantic-go-to-tag tag)
+		       (mapcar 'semantic-tag-name
+                               (semantic-analyze-scope-nested-tags (point) nil)))))
+		 (list (if (semantic-tag-p lastname) (semantic-tag-name lastname)
+                         lastname)))))
+    (concat (mapconcat 'concat names "::"))))
 
 (provide 'c-help)
 ;;; c-help.el ends here
