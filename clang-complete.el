@@ -44,9 +44,6 @@
 (autoload 'nvp-log "nvp-log")
 
 ;; defaults
-(defvar-local clang-complete-local-include-paths nil)
-(setq-default clang-complete-local-include-paths '("." ".." "../include"))
-
 (defvar clang-complete-default-defines '("DEBUG" "TEST"))
 
 ;; -------------------------------------------------------------------
@@ -58,7 +55,7 @@
     (getenv (if (eq mode 'c-mode) "C_INCLUDE_PATH" "CPLUS_INCLUDE_PATH"))
     path-separator)
    (and (not system)
-        (bound-and-true-p clang-complete-local-include-paths))
+        (bound-and-true-p c-tools-local-include-paths))
    (if (eq mode 'c-mode)
        (bound-and-true-p c-tools-clang-c-include-dirs)
      (bound-and-true-p c-tools-c++-include-dirs))))

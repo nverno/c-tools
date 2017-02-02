@@ -43,6 +43,9 @@
 (nvp-package-dir c-tools--dir)
 (nvp-package-load-snippets c-tools--dir)
 
+(defvar-local c-tools-local-include-paths nil)
+(setq-default c-tools-local-include-paths '("." ".." "../include"))
+
 ;; -------------------------------------------------------------------
 ;;; Util
 
@@ -70,6 +73,10 @@
               (_ (setf trim-p nil))))
       (push (string-trim-right (substring str prev)) res)
       (nreverse res))))
+
+(defsubst c-tools-out-file (&optional file)
+  (concat (file-name-sans-extension (or file (buffer-file-name)))
+          (nvp-with-gnu/w32 ".out" ".exe")))
 
 ;; ------------------------------------------------------------
 ;;; Install

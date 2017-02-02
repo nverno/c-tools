@@ -61,22 +61,20 @@
   (defmacro c-test-runner-fn (name &optional c++ flags libs)
     (declare (indent defun))
     (let ((fn (nvp-string-or-symbol name)))
-      `(defun ,fn (&optional file keep)
+      `(defun ,fn (&optional file post-compile)
          "Run tests in current buffer or FILE. Don't throw away executable if KEEP
 is non-nil."
          (interactive)
          (let* ((default-directory (if file (file-name-directory file)
                                      default-directory))
-                (out (concat (file-name-sans-extension
-                              (or file (buffer-file-name)))
-                             (nvp-with-gnu/w32 ".out" ".exe")))
+                (out (c-tools-out-file))
                 (compile-command
                  (concat
                   (nvp-concat
                    (nvp-program ,(if c++ "g++" "gcc")) " " ,flags " ")
                   " -o " out " " (or file buffer-file-name) " "
                   (nvp-concat ,libs "; ./") (file-name-nondirectory out)
-                  (and (not keep) (concat "; rm " out))))
+                  "; " (or post-compile (concat " rm " out))))
                 (compilation-read-command nil))
            (call-interactively 'compile)))))
 
@@ -161,6 +159,17 @@ is non-nil."
    "-Werror -Wall -std=c11 -O2 -s -DTEST -I. -I"
    (c-local-include-path "unity/src") " "
    (c-local-include-path "unity/src/unity.c")))
+
+;; compile associated unit test and run valgrind on it
+(defun c-test-run-valgrind (file)
+  (interactive
+   (list (if (nvp-test-file-p)
+             (buffer-file-name)
+           (or (nvp-test-find-matching-test
+                (buffer-file-name) (nvp-test-dir 'local))
+               (buffer-file-name)))))
+  (funcall-interactively
+   nvp-test-run-unit-function file (concat "valgrind " (c-tools-out-file))))
 
 (defun c-test-help-online ()
   (interactive)
