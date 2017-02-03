@@ -101,7 +101,9 @@
   (let ((mode (or mode major-mode))
         (init (file-exists-p ".clang_complete")))
     (with-current-buffer (find-file-noselect ".clang_complete")
-      (when arg (insert (clang-complete-read-input)))
+      (when arg
+        (insert "\n")
+        (insert (clang-complete-read-input)))
       (let ((opts (clang-complete-parse-buffer))
             (new-opts (nconc options
                              (and init (not no-defaults)

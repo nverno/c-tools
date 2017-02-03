@@ -35,7 +35,7 @@
   (defvar nvp-abbrev-local-table))
 (require 'nvp-test)
 (autoload 'yas-expand "yasnippet")
-(autoload 'c-tools-clang-complete "c-tools")
+(autoload 'clang-complete-create-or-update "clang-complete")
 
 ;;; TODO:
 ;; - Generate test abbrevs from macros in header files
@@ -67,7 +67,7 @@ is non-nil."
          (interactive)
          (let* ((default-directory (if file (file-name-directory file)
                                      default-directory))
-                (out (c-tools-out-file))
+                (out (c-tools-out-file file))
                 (compile-command
                  (concat
                   (nvp-concat
