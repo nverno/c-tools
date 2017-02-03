@@ -99,7 +99,7 @@
 (defun clang-complete-create-or-update (arg &optional mode options no-defaults)
   (interactive "P")
   (let ((mode (or mode major-mode))
-        (init (file-exists-p ".clang_complete")))
+        (init (not (file-exists-p ".clang_complete"))))
     (with-current-buffer (find-file-noselect ".clang_complete")
       (when arg
         (insert "\n")
