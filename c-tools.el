@@ -205,10 +205,11 @@
          (compile-command
           (format "%s %s -o %s%s %s" (nvp-program "gcc")
                   flags out (nvp-with-gnu/w32 ".out" ".exe") file)))
-    (nvp-compile-basic)))
+    (setq-local compile-command compile-command)
+    (call-interactively 'nvp-compile-basic)))
 
 ;; compile current file and run it with output to compilation buffer
-(defun c-tools-compile-and-run (keep &optional compiler flags no-run)
+(defun c-tools-compile-and-run (keep &optional compiler flags post-action)
   (interactive "P")
   (let* ((out (concat (file-name-sans-extension
                        (file-name-nondirectory buffer-file-name))
@@ -216,15 +217,28 @@
          (command
           (concat (or compiler (nvp-program "gcc")) " "
                   (or flags "-s -O3") " "
-                  buffer-file-name " -o " out
-                  (unless no-run (concat "; ./" out))
+                  buffer-file-name " -o " out "; "
+                  (or (and (eq post-action 'no-run) "")
+                      post-action (concat "./" out))
                   (unless keep (concat "; rm " out)))))
     (setq-local compile-command command)
     (call-interactively 'nvp-compile-basic)))
 
+;; watch error output with TEST
+(defun c-tools-compile-watch (arg)
+  (interactive "P")
+  (let ((file (if arg (read-from-minibuffer "Output file: " "out.txt")
+                "out.txt"))
+        (out (file-name-nondirectory (c-tools-out-file))))
+    (c-tools-compile-and-run
+     nil nil "-O3 -DTEST -std=c11"
+     (concat "./" out " 2> " file
+             "& gnome-terminal -x watch tail -n10 " file))))
+
 (defun c-tools-compile-debug ()
   (interactive)
-  (c-tools-compile-and-run 'keep nil "-Wall -Werror -ggdb3 -DDEBUG" 'no-run))
+  (c-tools-compile-and-run 'keep nil "-Wall -Werror -ggdb3 -DDEBUG" 'no-run)
+  (call-interactively 'gdb))
 
 ;; ------------------------------------------------------------
 ;;; Toggle / insert
