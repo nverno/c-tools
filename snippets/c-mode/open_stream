@@ -6,12 +6,14 @@ FILE *${1:fp};                  // input stream
 int result = ${2:EXIT_SUCCESS}; // exit status
 
 if (argc == 1)
-  result = ${3:read_input}( stdin$4 );
+  ${3:result} = ${4:read_input}( stdin$5 );
 else
   while (result == $2 && --argc) {
     if ((fp = fopen( *++argv, "r" )) != NULL) {
-      result = $3( fp$4 );
+      $3 = $4( fp$5 );
       fclose(fp);
     } else
       result = EXIT_FAILURE;
   }
+
+return result;
