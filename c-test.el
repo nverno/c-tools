@@ -72,9 +72,11 @@ is non-nil."
                  (concat
                   (nvp-concat
                    (nvp-program ,(if c++ "g++" "gcc")) " " ,flags " ")
-                  " -o " out " " (or file buffer-file-name) " "
-                  (nvp-concat ,libs "; ./") (file-name-nondirectory out)
-                  "; " (or post-compile (concat " rm " out))))
+                  " -o " out " " (or file buffer-file-name)
+                  (nvp-concat " " ,libs ";")
+                  (or post-compile
+                      (concat "./" (file-name-nondirectory out)
+                              "; rm " out))))
                 (compilation-read-command nil))
            (call-interactively 'compile)))))
 
@@ -169,7 +171,7 @@ is non-nil."
                 (buffer-file-name) (nvp-test-dir 'local))
                (buffer-file-name)))))
   (funcall-interactively
-   nvp-test-run-unit-function file (concat "valgrind " (c-tools-out-file))))
+   nvp-test-run-unit-function file (concat "valgrind " (c-tools-out-file file))))
 
 (defun c-test-help-online ()
   (interactive)
