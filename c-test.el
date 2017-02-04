@@ -87,21 +87,6 @@ is non-nil."
       (car (split-string (getenv "C_INCLUDE_PATH") path-separator t " ")))))
 
 ;; -------------------------------------------------------------------
-;;; Environment / Paths
-
-;; set environment stuff
-(defun c-test-setenv (type)
-  (pcase type
-    (`"unity"
-     ;; add path to unity source to macroexpand all the shittles
-     (let ((env (getenv "C_INCLUDE_PATH")))
-       (unless (string-match-p "unity" env)
-         (setenv "C_INCLUDE_PATH"
-                 (concat env ":" (expand-file-name
-                                  ".local/include/unity/src" (getenv "HOME")))))))
-    (_ ())))
-
-;; -------------------------------------------------------------------
 ;;; Setup Tests
 
 (eval-when-compile
@@ -111,10 +96,12 @@ is non-nil."
 
 ;; init new test file
 (defun c-test-init (type &optional source-file)
-  (c-test-setenv type)
+  (c-tools-setenv type)
   ;; call after setting test environment to get paths to unit testing
   ;; framework included
   (clang-complete-create-or-update nil 'c-mode '(("-D" . "TEST")))
+  (and (fboundp 'irony-cdb-autosetup-compile-options)
+       (irony-cdb-autosetup-compile-options))
   (yas-expand-snippet
    (yas-lookup-snippet (concat type "_init") 'c-mode)
    nil nil

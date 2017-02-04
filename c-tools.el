@@ -166,6 +166,32 @@
       (start-process-shell-command
        "cmake" "*nvp-install*" (format "cmake %s && %s" args build-cmd)))))
 
+;; -------------------------------------------------------------------
+;;; Environment
+
+(autoload 'asdf-where "asdf")
+
+;; set environment stuff for macro expanding
+;; could also set local `c-macro-preprocessor'?
+(defun c-tools-setenv (type)
+  (interactive
+   (list (ido-completing-read "Set include path for: " '("unity" "R"))))
+  (let ((env (getenv "C_INCLUDE_PATH")))
+    (pcase type
+      (`"unity"
+       ;; add path to unity source to macroexpand all the shittles
+       (unless (string-match-p "unity" env)
+         (setenv "C_INCLUDE_PATH"
+                 (concat env ":" (expand-file-name
+                                  ".local/include/unity/src" (getenv "HOME"))))))
+      (`"R"
+       (unless (string-match-p "/R/include" env)
+         (setenv "C_INCLUDE_PATH"
+                 (concat
+                  env ":"
+                  (expand-file-name "lib/R/include" (asdf-where "R" 'current))))))
+      (_ ()))))
+
 ;; ------------------------------------------------------------
 ;;; Commands
 
