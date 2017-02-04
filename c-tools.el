@@ -189,7 +189,9 @@
          (setenv "C_INCLUDE_PATH"
                  (concat
                   env ":"
-                  (expand-file-name "lib/R/include" (asdf-where "R" 'current))))))
+                  (expand-file-name "lib/R/include" (asdf-where "R" 'current)))))
+       (setq-local local-abbrev-table c/R-mode-abbrev-table)
+       (setq-local nvp-abbrev-local-table "c/R"))
       (_ ()))))
 
 ;; ------------------------------------------------------------

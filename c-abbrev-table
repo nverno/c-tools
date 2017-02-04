@@ -26,6 +26,16 @@
   "C-mode abbrevs."
   :parents (list c-common-abbrev-table))
 
+(define-abbrev-table 'c/R-abbrev-table
+  '(
+    ("cv" ["coerceVector(  );" 3 nil nil] expand-abbrev-hook :system t)
+    ("integer" "INTEGER" nil :system t)
+    ("nil" "R_NilValue" nil :system t)
+    ("real" "REAL" nil :system t)
+    ("sexp" "SEXP" nil :system t))
+  "C-R ffi abbrevs."
+  :parents (list c-mode-abbrev-table))
+
 (define-abbrev-table 'c++-mode-abbrev-table
   '(
     ("th" "this" nil :system t)

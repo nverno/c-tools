@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: R alloc
+# key: ralloc
+# --
+PROTECT( ${1:Rval} = allocVector(${2:INTSXP}, ${3:size}) );
+$0
+UNPROTECT( 1 );
