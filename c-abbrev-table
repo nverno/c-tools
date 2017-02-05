@@ -29,9 +29,9 @@
 (define-abbrev-table 'c/R-abbrev-table
   '(
     ("cv" ["coerceVector(  );" 3 nil nil] expand-abbrev-hook :system t)
-    ("integer" "INTEGER" nil :system t)
-    ("nil" "R_NilValue" nil :system t)
-    ("real" "REAL" nil :system t)
+    ("rint" "INTEGER" nil :system t)
+    ("rnil" "R_NilValue" nil :system t)
+    ("rreal" "REAL" nil :system t)
     ("sexp" "SEXP" nil :system t))
   "C-R ffi abbrevs."
   :parents (list c-mode-abbrev-table))
