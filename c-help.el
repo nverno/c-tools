@@ -53,11 +53,11 @@
                            (and (string-prefix-p (car src) file)
                                 src))
                          c-help-sources))))
-    (if (not ref)
-        (message "No documentation source found for %S" tag)
-      (if (or online current-prefix-arg)
-          (browse-url (format (cdr ref) (semantic-tag-name tag)))
-        (man (semantic-tag-name tag))))))
+    (if (or online current-prefix-arg)
+        (if (not ref)
+            (message "No documentation source found for %S" tag)
+          (browse-url (format (cdr ref) (semantic-tag-name tag))))
+      (man (concat "3 " (or (and ref (semantic-tag-name tag)) tag))))))
 
 (provide 'c-help)
 ;;; c-help.el ends here
