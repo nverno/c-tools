@@ -33,12 +33,17 @@
   (require 'cl-lib)
   (require 'nvp-macro)
   (defvar gud-comint-buffer)
-  (defvar irony-server-install-prefix))
+  (defvar irony-server-install-prefix)
+  (defvar nvp-abbrev-local-table))
 (autoload 'nvp-log "nvp-log")
 (autoload 'nvp-ext-sudo-command "nvp-ext")
 (autoload 'nvp-compile-basic "nvp-compile")
 (autoload 'nvp-compile-cmake "nvp-compile")
 (autoload 'string-trim-right "subr-x")
+
+;;; TODO:
+;; - Move env setup ffi - R, lisp - to separate file.
+;;   Should do env., snippets, abbrevs, etc all together.
 
 (nvp-package-dir c-tools--dir)
 (nvp-package-load-snippets c-tools--dir)
