@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: e128 function with doc
+# key: hfun
+# condition: (bound-and-true-p e128-c-style)
+# --
+/**
+ *	$2 ()
+ *			${4:description}
+ */
+${1:void} ${2:name}($3)${5: {
+        $0
+}}
