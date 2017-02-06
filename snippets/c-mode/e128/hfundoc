@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: e128 function with doc
-# key: hfun
+# name: e128 function doc2
+# key: hfundoc
 # condition: (bound-and-true-p e128-c-style)
 # --
 /**

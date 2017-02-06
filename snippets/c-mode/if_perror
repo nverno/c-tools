@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: if_perror
+# key: ifperr
+# --
+if ( $1 ) {
+  perror("ERROR $2");
+  exit(EXIT_FAILURE);
+}
