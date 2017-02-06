@@ -83,6 +83,17 @@
   (concat (file-name-sans-extension (or file (buffer-file-name)))
           (nvp-with-gnu/w32 ".out" ".exe")))
 
+;; pull out functions signatures from current buffer using ctags
+(defun c-tools-function-signatures (&optional file)
+  (let ((sigs (process-lines "ctags" "-x" "--c-kinds=fp"
+                             (or file buffer-file-name))))
+    (mapcar
+     (lambda (s)
+       (replace-regexp-in-string
+        "[ \t]*{$" ";"
+        (cadr (split-string s (or file buffer-file-name) t " "))))
+     sigs)))
+
 ;; ------------------------------------------------------------
 ;;; Install
 
@@ -273,8 +284,47 @@
   (c-tools-compile-and-run 'keep nil "-Wall -Werror -ggdb3 -DDEBUG" 'no-run)
   (call-interactively 'gdb))
 
-;; ------------------------------------------------------------
-;;; Toggle / insert
+;; -------------------------------------------------------------------
+;;; Headers
+
+(eval-when-compile
+  (defvar yas-selected-text)
+  (defvar yas-wrap-around-region))
+(declare-function yas-expand-snippet "yasnippet")
+(declare-function yas-lookup-snippet "yasnippet")
+
+;;; Create/update header file with function signatures
+(defun c-tools-create-or-update-header ()
+  (interactive)
+  (let ((header (concat (file-name-sans-extension buffer-file-name) ".h"))
+        (sigs (c-tools-function-signatures))
+        (yas-wrap-around-region nil)
+        (init t))
+    (when (file-exists-p header)
+      (setq init nil)
+      (setq sigs
+            ;; remove any signatures that are already found in the header file
+            (cl-set-difference
+             sigs
+             (c-tools-function-signatures header)
+             :test 'string=)))
+    (when sigs
+      (with-current-buffer (find-file header)
+        (setq sigs (concat "\n" (mapconcat 'identity sigs "\n")))
+        (if init
+            (let ((yas-selected-text sigs))
+              (yas-expand-snippet
+               (yas-lookup-snippet "header" 'cc-mode)))
+          ;; search forward past #define HEADER_H
+          (goto-char (point-min))
+          (re-search-forward
+           (concat
+            "#define[ \t]+" (regexp-quote
+                             (concat (upcase (file-name-nondirectory
+                                              (file-name-sans-extension header)))
+                                     "_H")))
+           nil 'move)
+          (insert sigs))))))
 
 ;; add header guard
 (defun c-tools-add-guard ()
