@@ -33,7 +33,10 @@
 
 ;; sources determined by source file paths
 (defvar c-help-sources
-  (let ((uri "http://en.cppreference.com/mwiki/index.php?title=Special:Search&search=%s"))
+  (let ((uri
+         "http://pubs.opengroup.org/onlinepubs/9699919799/functions/%s.html"
+         ;; "http://en.cppreference.com/mwiki/index.php?title=Special:Search&search=%s"
+         ))
     (cl-loop for p in semantic-c-dependency-system-include-path
        collect (cons p uri))))
 

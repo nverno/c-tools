@@ -1,8 +1,8 @@
 # -*- mode: snippet -*-
-# name: if perror
+# name: iferr1
 # key: iferr
 # --
 if ( $1 ) {
   perror("ERROR $2");
-  exit(1);
+  exit(EXIT_FAILURE);
 }
