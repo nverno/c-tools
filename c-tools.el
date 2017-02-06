@@ -294,8 +294,8 @@
 (declare-function yas-lookup-snippet "yasnippet")
 
 ;;; Create/update header file with function signatures
-(defun c-tools-create-or-update-header ()
-  (interactive)
+(defun c-tools-create-or-update-header (and-go)
+  (interactive (list t))
   (let ((header (concat (file-name-sans-extension buffer-file-name) ".h"))
         (sigs (c-tools-function-signatures))
         (yas-wrap-around-region nil)
@@ -324,7 +324,9 @@
                                               (file-name-sans-extension header)))
                                      "_H")))
            nil 'move)
-          (insert sigs))))))
+          (insert sigs))))
+    (if and-go
+        (find-file header))))
 
 ;; add header guard
 (defun c-tools-add-guard ()
