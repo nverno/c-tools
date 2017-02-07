@@ -90,7 +90,7 @@
     (mapcar
      (lambda (s)
        (replace-regexp-in-string
-        "[ \t]*{$" ";"
+        "[ \t;{]*$" ""
         (cadr (split-string s (or file buffer-file-name) t " "))))
      sigs)))
 
@@ -310,7 +310,7 @@
              :test 'string=)))
     (when sigs
       (with-current-buffer (find-file header)
-        (setq sigs (concat "\n" (mapconcat 'identity sigs "\n")))
+        (setq sigs (concat "\n" (mapconcat 'identity sigs ";\n")))
         (if init
             (let ((yas-selected-text sigs))
               (yas-expand-snippet
