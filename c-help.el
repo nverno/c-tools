@@ -32,13 +32,35 @@
 (require 'semantic/analyze)
 
 ;; sources determined by source file paths
-(defvar c-help-sources
+(defvar c-help-online-sources
   (let ((uri
          "http://pubs.opengroup.org/onlinepubs/9699919799/functions/%s.html"
          ;; "http://en.cppreference.com/mwiki/index.php?title=Special:Search&search=%s"
          ))
     (cl-loop for p in semantic-c-dependency-system-include-path
        collect (cons p uri))))
+
+;; if filename prefix is member of car, apply cadr to (format cddr)
+;; use man 2 for system call type stuff, otherwise man 3
+(defvar c-help-local-sources
+  `((("/usr/include/unistd" "/usr/include/fcntl") . (man "2 %s"))
+    (,semantic-c-dependency-system-include-path . (man "3 %s"))))
+
+(eval-when-compile
+  (defmacro c-help-find-source (type file)
+    "Find help location for TYPE as determined by FILE."
+    (pcase type
+      (`'online
+       `(cl-some (lambda (src)
+                   (and (string-prefix-p (car src) ,file)
+                        src))
+                 c-help-online-sources))
+      (_
+       `(cdr-safe
+         (cl-find-if
+          (lambda (entry)
+            (cl-some (lambda (e) (string-prefix-p e ,file)) (car entry)))
+          c-help-local-sources))))))
 
 ;; semantic tag at point
 (defsubst c-help-tag-at (point)
@@ -50,18 +72,23 @@
   (interactive "d")
   (let* ((tag (c-help-tag-at point))
          (file (and (semantic-tag-p tag)
-                    (semantic-tag-file-name tag)))
-         (ref (when (stringp file)
-                (cl-some (lambda (src)
-                           (and (string-prefix-p (car src) file)
-                                src))
-                         c-help-sources))))
+                    (semantic-tag-file-name tag))))
     (if (or online current-prefix-arg)
-        (if (not ref)
-            (message "No documentation source found for %S" tag)
-          (browse-url (format (cdr ref) (semantic-tag-name tag))))
-      (man (concat "3 " (or (and ref (semantic-tag-name tag)) tag))))))
+        (let ((ref (and (stringp file)
+                        (c-help-find-source 'online file))))
+          (if (not ref)
+              (message "No documentation source found for %S" tag)
+            (browse-url (format (cdr ref) (semantic-tag-name tag)))))
+      (let ((action (and (stringp file) (c-help-find-source 'local file))))
+        (and action
+             (apply (car action)
+                    (format (cadr action) (or (and (semantic-tag-p tag)
+                                                   (semantic-tag-name tag))
+                                              tag))
+                    (cddr action)))
+        ))))
 
+;; TODO: index and search
 (defun c-help-std ()
   (interactive)
   (browse-url "http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf"))
