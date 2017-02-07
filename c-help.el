@@ -62,5 +62,9 @@
           (browse-url (format (cdr ref) (semantic-tag-name tag))))
       (man (concat "3 " (or (and ref (semantic-tag-name tag)) tag))))))
 
+(defun c-help-std ()
+  (interactive)
+  (browse-url "http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf"))
+
 (provide 'c-help)
 ;;; c-help.el ends here
