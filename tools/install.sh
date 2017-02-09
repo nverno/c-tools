@@ -36,5 +36,5 @@ done
 
 if [ ! -d "$C_INCLUDE_PATH/unity" ]; then
     git clone --depth=1 https://github.com/ThrowTheSwitch/Unity \
-        ~/.local/include/unity
+        "$C_INCLUDE_PATH/unity"
 fi
