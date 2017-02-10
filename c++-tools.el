@@ -30,34 +30,6 @@
   (require 'nvp-macro))
 (require 'c-tools)
 
-(defvar c++-tools-help-sources
-  '(("std::" .
-     "http://en.cppreference.com/mwiki/index.php?title=Special:Search&search=%s")
-    ("boost::" . "http://google.com/search?q=site:boost.org%%20%s")))
-
-;; -------------------------------------------------------------------
-;;; Util
-
-;; https://github.com/alexott/emacs-configs/rc/emacs-rc-ccmode.el
-;; Use semantic to determine the fully namespace-qualified type of the symbol at
-;; POINT.
-(defun c++-tools-type-at (point)
-  (let* ((ctxt (semantic-analyze-current-context point))
-	 (pf (reverse (oref ctxt prefix)))
-	 (lastname (pop pf))
-	 (tag (if (semantic-tag-p lastname) lastname (caar pf)))
-	 (names (append
-		 (when (semantic-tag-p tag)
-		   (save-excursion
-		     (when (semantic-tag-with-position-p tag)
-		       (set-buffer (semantic-tag-buffer tag))
-		       (semantic-go-to-tag tag)
-		       (mapcar 'semantic-tag-name
-                               (semantic-analyze-scope-nested-tags (point) nil)))))
-		 (list (if (semantic-tag-p lastname) (semantic-tag-name lastname)
-                         lastname)))))
-    (concat (mapconcat 'concat names "::"))))
-
 ;; -------------------------------------------------------------------
 ;;; Commands 
 
@@ -77,20 +49,6 @@
   (interactive "P")
   (funcall-interactively 'c-tools-compile-and-run keep
                          (nvp-program "g++") "-std=c++14 -O3 -s"))
-
-;;; Help
-
-;; https://github.com/alexott/emacs-configs/rc/emacs-rc-ccmode.el
-(defun c++-tools-browse-doc (point)
-  "Browse the documentation for the C++ symbol at POINT."
-  (interactive "d")
-  (let* ((cpptype (c++-tools-type-at point))
-	 (ref (when (stringp cpptype)
-		(car (cl-member-if (lambda (S) (string-prefix-p (car S) cpptype))
-				   c++-tools-help-sources)))))
-    (if ref	
-	(browse-url (format (cdr ref) cpptype))
-      (message "No documentation source found for %s" cpptype))))
 
 ;; -------------------------------------------------------------------
 ;;; Font-lock
