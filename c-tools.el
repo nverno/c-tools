@@ -310,7 +310,7 @@
              :test 'string=)))
     (when sigs
       (with-current-buffer (find-file header)
-        (setq sigs (concat "\n" (mapconcat 'identity sigs ";\n")))
+        (setq sigs (concat "\n" (mapconcat 'identity sigs ";\n") ";"))
         (if init
             (let ((yas-selected-text sigs))
               (yas-expand-snippet
@@ -376,14 +376,16 @@
 
 ;; get variable name from declaration, either with type or not
 ;; eg., i = 1 or int i = 1 => `i'
-(defsubst c-yas-var ()
-  (let* ((str (car (split-string yas-text "=" t " ")))
-         (strs (split-string str nil t " ")))
-    (or (cadr strs) (car strs))))
+(defsubst c-yas-var (text)
+  (if (< (length text) 1)
+      ""
+   (let* ((str (car (split-string text "=" t " ")))
+          (strs (split-string str nil t " ")))
+     (or (cadr strs) (car strs)))))
 
 ;; convert functions args to doxygen params
-(defsubst c-yas-args-docstring ()
-  (let ((args (c-tools-split-string yas-text)))
+(defsubst c-yas-args-docstring (text)
+  (let ((args (c-tools-split-string text)))
     (and args
          (mapconcat 'identity
                     (mapcar (lambda (s) (concat "\n * @param " s)) args) ""))))

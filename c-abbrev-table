@@ -20,7 +20,7 @@
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
-    ("st" "size_t" nil :system t)
+    ("szt" "size_t" nil :system t)
     ("null" "NULL" nil :system t)
     )
   "C-mode abbrevs."
