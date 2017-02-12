@@ -34,7 +34,7 @@ for prog in "${progs[@]}"; do
     fi
 done
 
-if [ ! -d "$C_INCLUDE_PATH/unity" ]; then
+if [ ! -d ~/.local/include/unity ]; then
     git clone --depth=1 https://github.com/ThrowTheSwitch/Unity \
-        "$C_INCLUDE_PATH/unity"
+        ~/.local/include/unity
 fi
