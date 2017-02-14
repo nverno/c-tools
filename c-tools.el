@@ -32,6 +32,7 @@
 (eval-when-compile
   (require 'cl-lib)
   (require 'nvp-macro)
+  (defvar c/R-abbrev-table)
   (defvar gud-comint-buffer)
   (defvar irony-server-install-prefix)
   (defvar nvp-abbrev-local-table))
@@ -57,7 +58,7 @@
 ;; split string STR on commas, but only when not between <..>
 ;; eg., "std::vector<std::pair<int,int>> i, int j" =>
 ;;      ("std::vector<std::pair<int,int>> i" "int j")
-(defsubst c-tools-split-string (str &optional delim)
+(defun c-tools-split-string (str &optional delim)
   (when (not (zerop (length str)))
     (let ((delim (or delim ?\,))
           (bcount 0)                     ; current opening brace count
@@ -389,6 +390,10 @@
     (and args
          (mapconcat 'identity
                     (mapcar (lambda (s) (concat "\n * @param " s)) args) ""))))
+
+;; -------------------------------------------------------------------
+(declare-function c-beginning-of-defun "cc-cmds")
+(declare-function c-mark-function "cc-cmds")
 
 (provide 'c-tools)
 ;;; c-tools.el ends here
