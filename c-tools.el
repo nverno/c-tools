@@ -86,7 +86,7 @@
 
 ;; pull out functions signatures from current buffer using ctags
 (defun c-tools-function-signatures (&optional file)
-  (let ((sigs (process-lines "ctags" "-x" "--c-kinds=fp"
+  (let ((sigs (process-lines (nvp-program "ctags") "-x" "--c-kinds=fp"
                              (or file buffer-file-name))))
     (mapcar
      (lambda (s)
