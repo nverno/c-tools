@@ -8,6 +8,6 @@
  *  args: ${3:$(if (> (length yas-text) 0) "" "none")}
  *  rets: ${1:$(if (not (string= yas-text "void")) "" "none")}
  */
-${1:void}${2:name}($3) {
+${1:void} ${2:name}($3) {
         $0
 }
