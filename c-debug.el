@@ -1,9 +1,9 @@
-;;; c-tools-auto --- 
+;;; c-debug ---  -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
-;; URL: https://github.com/nverno/c-tools
+;; URL: https://github.com/nverno/c-debug
 ;; Package-Requires: 
 ;; Created: 11 November 2016
 
@@ -27,12 +27,14 @@
 ;;; Commentary:
 ;;; Code:
 (eval-when-compile
-  (require 'nvp-macro))
+  (require 'nvp-macro)
+  (defvar c-mode-map)
+  (defvar c++-mode-map))
 (require 'nvp-indicate)
 (require 'gud)
 
 ;;;###autoload
-(defun c-tools-gud-switch ()
+(defun c-debug-gud-switch ()
   (interactive)
   (if gud-comint-buffer
       (pop-to-buffer gud-comint-buffer)
@@ -43,13 +45,13 @@
 (when (require 'hydra nil t)
  
   (nvp-bindings "c-mode" 'cc-mode
-    ("<f2> d g" . c-tools-gud-hydra/body))
+    ("<f2> d g" . c-debug-gud-hydra/body))
   (nvp-bindings "c++-mode" 'cc-mode
-    ("<f2> d g" . c-tools-gud-hydra/body))
+    ("<f2> d g" . c-debug-gud-hydra/body))
   
   ;; compiler doesnt understande these functions
   (with-no-warnings
-    (defhydra c-tools-gud-hydra (:color amaranth
+    (defhydra c-debug-gud-hydra (:color amaranth
                                         :pre nvp-indicate-hydra-pre
                                         :post nvp-indicate-hydra-post)
       ;; vi
@@ -68,7 +70,7 @@
       ("o" gud-finish "out")
       ("r" gud-run "run")
       ("q" nil "quit"))
-    (hydra-set-property 'c-tools-gud-hydra :verbosity 1)))
+    (hydra-set-property 'c-debug-gud-hydra :verbosity 1)))
 
-(provide 'c-tools-auto)
-;;; c-tools-auto.el ends here
+(provide 'c-debug)
+;;; c-debug.el ends here
