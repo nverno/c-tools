@@ -44,7 +44,6 @@
 ;; Use semantic to determine the fully namespace-qualified type of the symbol at
 ;; POINT.
 ;; https://github.com/alexott/emacs-configs/rc/emacs-rc-ccmode.el
-;;;###autoload
 (defun c++-help-type-at (point)
   (let* ((ctxt (semantic-analyze-current-context point))
 	 (pf (reverse (oref ctxt prefix)))
@@ -66,6 +65,7 @@
 ;;; Commands
 
 ;; https://github.com/alexott/emacs-configs/rc/emacs-rc-ccmode.el
+;;;###autoload
 (defun c++-help-at-point (point)
   "Browse the documentation for the C++ symbol at POINT."
   (interactive "d")
