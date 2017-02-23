@@ -20,8 +20,8 @@
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
-    ("efail" "EXIT_FAILURE" nil :system t)
-    ("esucc" "EXIT_SUCCESS" nil :system t)
+    ("exitf" "exit( EXIT_FAILURE );" nil :system t)
+    ("exits" "exit( EXIT_SUCCESS );" nil :system t)
     ("szt" "size_t" nil :system t)
     ("null" "NULL" nil :system t)
     )
