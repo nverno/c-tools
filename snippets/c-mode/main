@@ -4,5 +4,5 @@
 # --
 int main(${1:int argc, char *argv[]}) {
     $0
-    return 0;
+    return ${2:EXIT_SUCCESS};
 }
