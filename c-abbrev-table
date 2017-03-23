@@ -20,10 +20,15 @@
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
+    ("ef" "EXIT_FAILURE" nil :system t)
+    ("es" "EXIT_SUCCESS" nil :system t)
+
+    ("szt" "size_t" nil :system t)
+
+    ("null" "NULL" nil :system t)
+
     ("exitf" "exit( EXIT_FAILURE );" nil :system t)
     ("exits" "exit( EXIT_SUCCESS );" nil :system t)
-    ("szt" "size_t" nil :system t)
-    ("null" "NULL" nil :system t)
     )
   "C-mode abbrevs."
   :parents (list c-common-abbrev-table))
