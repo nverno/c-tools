@@ -61,10 +61,10 @@
   (defmacro c-test-runner-fn (name &optional c++ flags libs)
     (declare (indent defun))
     (let ((fn (nvp-string-or-symbol name)))
-      `(defun ,fn (&optional file post-compile)
+      `(defun ,fn (save &optional file post-compile)
          "Run tests in current buffer or FILE. Don't throw away executable if KEEP
 is non-nil."
-         (interactive)
+         (interactive "P")
          (let* ((default-directory (if file (file-name-directory file)
                                      default-directory))
                 (out (c-tools-out-file file))
@@ -74,7 +74,7 @@ is non-nil."
                    (nvp-program ,(if c++ "g++" "gcc")) " " ,flags " ")
                   " -o " out " " (or file buffer-file-name)
                   (nvp-concat " " ,libs ";")
-                  (or post-compile
+                  (or save post-compile
                       (concat "./" (file-name-nondirectory out)
                               "; rm " out))))
                 (compilation-read-command nil))
@@ -158,7 +158,8 @@ is non-nil."
                 (buffer-file-name) (nvp-test-dir 'local))
                (buffer-file-name)))))
   (funcall-interactively
-   nvp-test-run-unit-function file (concat "valgrind " (c-tools-out-file file))))
+   nvp-test-run-unit-function current-prefix-arg
+   file (concat "valgrind " (c-tools-out-file file))))
 
 (defun c-test-help-online ()
   (interactive)
