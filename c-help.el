@@ -43,7 +43,8 @@
 ;; if filename prefix is member of car, apply cadr to (format cddr)
 ;; use man 2 for system call type stuff, otherwise man 3
 (defvar c-help-local-sources
-  `((("/usr/include/unistd" "/usr/include/fcntl") . (man "2 %s"))
+  `((("/usr/include/unistd" "/usr/include/fcntl"
+      "sys/time") . (man "2 %s"))
     (,semantic-c-dependency-system-include-path . (man "3 %s"))))
 
 (eval-when-compile
@@ -59,7 +60,7 @@
        `(cdr-safe
          (cl-find-if
           (lambda (entry)
-            (cl-some (lambda (e) (string-prefix-p e ,file)) (car entry)))
+            (cl-some (lambda (e) (string-match-p e ,file)) (car entry)))
           c-help-local-sources))))))
 
 ;; semantic tag at point
