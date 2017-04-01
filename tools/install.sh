@@ -11,8 +11,8 @@ update() {
     fi
 }
 
-progs=(clang cmake valgrind boost CUnit check doxygen glibc-doc ncurses-doc
-       coreutils)
+progs=(clang cmake boost CUnit check doxygen glibc-doc ncurses-doc
+       coreutils valgrind kcachegrind)
 for prog in "${progs[@]}"; do
     if ! hash $prog 2>/dev/null ; then
         update
