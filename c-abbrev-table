@@ -5,8 +5,8 @@
     ("#d" "#define" nil :system t)
     ("#ifd" "#ifdef" nil :system t)
     ("#ifn" "#ifndef" nil :system t)
-    ("#max" "#define max(A, B) ((A) > (B) ? (A) : (B))" nil :system t)
-    ("#min" "#define max(A, B) ((A) < (B) ? (A) : (B))" nil :system t))
+    ("#max" "#define MAX(A, B) ((A) > (B) ? (A) : (B))" nil :system t)
+    ("#min" "#define MIN(A, B) ((A) < (B) ? (A) : (B))" nil :system t))
   "Includes abbrevs b/c cant have optional character looking back."
   :regexp "\\(#\\w+\\)"
   :parents (list prog-mode-abbrev-table))
