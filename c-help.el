@@ -44,7 +44,8 @@
 ;; use man 2 for system call type stuff, otherwise man 3
 (defvar c-help-local-sources
   `((("/usr/include/unistd" "/usr/include/fcntl"
-      "sys/time" "sys/wait" "/usr/include/signal") . (man "2 %s"))
+      "sys/time" "sys/wait" "sys/resource"
+      "/usr/include/signal") . (man "2 %s"))
     (,semantic-c-dependency-system-include-path . (man "3 %s"))))
 
 (eval-when-compile
@@ -67,7 +68,10 @@
 (defsubst c-help-tag-at (point)
   (car (reverse (oref (semantic-analyze-current-context point) prefix))))
 
-;; lookup info in man or online for thing at point
+;; TODO: if 'man 2' doesn't work, try 'man 3', eg. execvp in unistd
+;;      - how to hook into Man to know if there was a problem?
+;;        it creates the buffer no matter what, and runs async
+;; Lookup info in man or online for thing at point
 ;;;###autoload
 (defun c-help-at-point (point &optional online)
   (interactive "d")
@@ -80,14 +84,14 @@
           (if (not ref)
               (message "No documentation source found for %S" tag)
             (browse-url (format (cdr ref) (semantic-tag-name tag)))))
-      (let ((action (and (stringp file) (c-help-find-source 'local file))))
-        (and action
-             (apply (car action)
-                    (format (cadr action) (or (and (semantic-tag-p tag)
-                                                   (semantic-tag-name tag))
-                                              tag))
-                    (cddr action)))
-        ))))
+      (let ((action (and (stringp file)
+                         (c-help-find-source 'local file))))
+        (when action
+          (apply (car action)
+                 (format (cadr action) (or (and (semantic-tag-p tag)
+                                                (semantic-tag-name tag))
+                                           tag))
+                 (cddr action)))))))
 
 ;; TODO: index and search
 (defun c-help-std ()
