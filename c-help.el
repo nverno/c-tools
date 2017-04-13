@@ -44,7 +44,7 @@
 ;; use man 2 for system call type stuff, otherwise man 3
 (defvar c-help-local-sources
   `((("/usr/include/unistd" "/usr/include/fcntl"
-      "sys/time" "/usr/include/signal") . (man "2 %s"))
+      "sys/time" "sys/wait" "/usr/include/signal") . (man "2 %s"))
     (,semantic-c-dependency-system-include-path . (man "3 %s"))))
 
 (eval-when-compile
