@@ -71,6 +71,18 @@
 ;; TODO: if 'man 2' doesn't work, try 'man 3', eg. execvp in unistd
 ;;      - how to hook into Man to know if there was a problem?
 ;;        it creates the buffer no matter what, and runs async
+(defun c-help-get-man-help (cmd)
+  (let ((buf (man cmd)))
+    (sit-for 0.1)                       ;FIXME
+    (unless (buffer-live-p buf)
+      (let ((num (substring cmd 0 1)))
+        (man (concat
+              (pcase num
+                (`"1" "2")
+                (`"2" "3")
+                (`"3" "2"))
+              (substring cmd 1)))))))
+
 ;; Lookup info in man or online for thing at point
 ;;;###autoload
 (defun c-help-at-point (point &optional online)
@@ -85,13 +97,16 @@
               (message "No documentation source found for %S" tag)
             (browse-url (format (cdr ref) (semantic-tag-name tag)))))
       (let ((action (and (stringp file)
-                         (c-help-find-source 'local file))))
+                         (c-help-find-source 'local file)))
+            (tag-name (or (and (semantic-tag-p tag)
+                               (semantic-tag-name tag))
+                          tag)))
         (when action
-          (apply (car action)
-                 (format (cadr action) (or (and (semantic-tag-p tag)
-                                                (semantic-tag-name tag))
-                                           tag))
-                 (cddr action)))))))
+          (pcase (car action)
+            ('man (c-help-get-man-help (format (cadr action) tag-name)))
+            (_ (apply (car action)
+                      (format (cadr action) tag-name)
+                      (cddr action)))))))))
 
 ;; TODO: index and search
 (defun c-help-std ()
