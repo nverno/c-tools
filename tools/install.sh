@@ -2,6 +2,7 @@
 
 set -o nounset -o pipefail -o errexit
 . ~/bin/utils.sh
+. ~/.env 
 
 updated=0
 update() {
