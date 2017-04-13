@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: ifd
-# key: ifd
+# key: ifdebug
 # --
 #ifdef DEBUG
   $0
