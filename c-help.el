@@ -71,9 +71,13 @@
 ;; TODO: if 'man 2' doesn't work, try 'man 3', eg. execvp in unistd
 ;;      - how to hook into Man to know if there was a problem?
 ;;        it creates the buffer no matter what, and runs async
+;; (defun c-help-Man-cooked-hook ()
+;;   (and (eq 0 (buffer-size))
+;;        (throw 'no-dice nil)))
+;; (setq Man-cooked-hook 'c-help-Man-cooked-hook)
 (defun c-help-get-man-help (cmd)
   (let ((buf (man cmd)))
-    (sit-for 0.1)                       ;FIXME
+    (sit-for 0.1)                      ;FIXME
     (unless (buffer-live-p buf)
       (let ((num (substring cmd 0 1)))
         (man (concat
