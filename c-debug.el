@@ -34,6 +34,13 @@
 (require 'gud)
 
 ;;;###autoload
+(defun c-debug-shell-setup ()
+  (require 'nvp-comint)
+  (hippie-expand-shell-setup 'comint-input-ring
+                             'comint-line-beginning-position)
+  (nvp-comint-setup-history ".gdb_history"))
+
+;;;###autoload
 (defun c-debug-gud-switch ()
   (interactive)
   (if gud-comint-buffer
