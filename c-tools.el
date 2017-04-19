@@ -338,10 +338,10 @@
                 "_H")))
     (save-excursion
       (goto-char (point-min))
-      (unless (looking-at-p (format "#ifndef %s" guard))
-        (insert (format "#ifndef %s\n#define %s\n\n" guard guard))
+      (unless (looking-at-p (format "#ifndef _%s" guard))
+        (insert (format "#ifndef _%s\n#define _%s\n\n" guard guard))
         (goto-char (point-max))
-        (insert (format "\n#endif /* %s */" guard))))))
+        (insert (format "\n#endif /* _%s */" guard))))))
 
 ;; -------------------------------------------------------------------
 ;;; Doxygen
