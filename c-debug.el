@@ -33,6 +33,8 @@
 (require 'nvp-indicate)
 (require 'gud)
 
+;;; FIXME: gud-mode seems to clobber kill-buffer-hooks,
+;;         so shell history isn't being saved/read properly
 ;;;###autoload
 (defun c-debug-shell-setup ()
   (require 'nvp-comint)
