@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -o nounset -o pipefail -o errexit
+# set -o nounset -o pipefail -o errexit
 . ~/bin/utils.sh
 . ~/.env 
 

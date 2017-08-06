@@ -123,8 +123,7 @@
      (t
       ;; install dependencies, then recall to install rest
       (nvp-with-gnu/w32
-          (nvp-with-process-log
-            (call-interactively 'c-tools-install-deps) :pop-on-error
+          (nvp-with-install-script c-tools--dir nil 'sudo
             (c-tools-install arg 'includes))
         ;; FIXME: msys / cygwin install cmake/clang
         (c-tools-install arg 'includes))))))
@@ -135,16 +134,16 @@
     (interactive)
     (nvp-ext-sudo-command
      nil
-     (expand-file-name "tools/install.sh" c-tools--dir))))
+     (expand-file-name "script/install.sh" c-tools--dir))))
 
 ;;; Cache system include paths
 ;; regen includes after 5 days or force with ARG
 (defun c-tools-install-includes (&optional arg)
-  (let ((includes (expand-file-name "tools/includes.el" c-tools--dir)))
+  (let ((includes (expand-file-name "script/includes.el" c-tools--dir)))
     (when (or (not (file-exists-p includes))
               (or arg (nvp-file-older-than-days includes 5)))
       (start-process "bash" "*nvp-install*" "bash"
-                     (expand-file-name "tools/includes.sh"
+                     (expand-file-name "script/includes.sh"
                                        c-tools--dir)
                      "make_sys_includes"))))
 
