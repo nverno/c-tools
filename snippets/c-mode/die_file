@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: die_file
+# key: die_file
+# --
+void die(const char *file) {
+  fprintf( stderr, "%s: %s\n", file, strerror(errno) );
+  exit( EXIT_FAILURE );
+}
