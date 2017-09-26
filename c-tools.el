@@ -369,7 +369,7 @@
     (align-regexp beg end "\\(\\s-*\\)\\*/")))
 
 ;; -------------------------------------------------------------------
-;;; Yas
+;;; Snippets / Yas
 
 (eval-when-compile
   (defvar yas-text))
