@@ -296,6 +296,14 @@
     (find-file-other-window asm-file)
     (add-hook 'kill-buffer-hook '(lambda () (delete-file buffer-file-name)) nil 'local)))
 
+(defun c-tools-compile-objdump ()
+  (interactive)
+  (let ((compile-command (format "gcc -Og -c %s; objdump -d %s.o; rm %s.o"
+                                 buffer-file-name
+                                 (file-name-sans-extension buffer-file-name)
+                                 (file-name-sans-extension buffer-file-name))))
+    (call-interactively 'nvp-basic-compile)))
+
 ;; -------------------------------------------------------------------
 ;;; Headers
 
