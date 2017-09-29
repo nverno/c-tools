@@ -237,6 +237,7 @@
    (c-beginning-of-defun -1)
    (point)))
 
+;; -------------------------------------------------------------------
 ;;; Compile
 
 ;; run make / cmake if there are corresponding makefiles,
@@ -283,6 +284,17 @@
   (interactive)
   (c-tools-compile-and-run 'keep nil "-Wall -Werror -ggdb3 -DDEBUG" 'no-run)
   (call-interactively 'gdb))
+
+;; show assembly in other window, delete assembly output
+(defun c-tools-compile-asm ()
+  (interactive)
+  (let ((compile-command (format "gcc -Og -S %s" buffer-file-name))
+        (asm-file
+         (concat (file-name-sans-extension buffer-file-name) ".s")))
+    (call-interactively 'nvp-compile-basic)
+    (sit-for 0.1)
+    (find-file-other-window asm-file)
+    (add-hook 'kill-buffer-hook '(lambda () (delete-file buffer-file-name)) nil 'local)))
 
 ;; -------------------------------------------------------------------
 ;;; Headers
