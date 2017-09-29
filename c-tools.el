@@ -291,10 +291,15 @@
   (let ((compile-command (format "gcc -Og -S %s" buffer-file-name))
         (asm-file
          (concat (file-name-sans-extension buffer-file-name) ".s")))
-    (call-interactively 'nvp-compile-basic)
-    (sit-for 0.1)
-    (find-file-other-window asm-file)
-    (add-hook 'kill-buffer-hook '(lambda () (delete-file buffer-file-name)) nil 'local)))
+    (with-current-buffer (call-interactively 'nvp-compile-basic)
+      (pop-to-buffer (current-buffer))
+      (add-hook 'compilation-finish-functions
+                (lambda (_b _s)
+                  (find-file-other-window asm-file)
+                  (add-hook 'kill-buffer-hook
+                            (lambda () (delete-file buffer-file-name))
+                            nil 'local))
+                nil 'local))))
 
 ;; dump objects in compilation buffer, setup imenu for function jumps
 ;; FIXME: add tab/backtab movement

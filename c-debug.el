@@ -71,8 +71,9 @@
       ;; gud
       ("t" gud-tbreak "tbreak")
       ("b" gud-break "break")
-      ("d" gud-remove "nbr")
-      ("p" gud-print "print" :color blue)
+      ("d" gud-remove "remove")
+      ("J" gud-jump "jump")
+      ("p" gud-print "print")
       ("m" gud-until "move")
       ("n" gud-next "next")
       ("c" gud-cont "cont")
