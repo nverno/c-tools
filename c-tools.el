@@ -296,13 +296,22 @@
     (find-file-other-window asm-file)
     (add-hook 'kill-buffer-hook '(lambda () (delete-file buffer-file-name)) nil 'local)))
 
+;; dump objects in compilation buffer, setup imenu for function jumps
+;; FIXME: add tab/backtab movement
 (defun c-tools-compile-objdump ()
   (interactive)
   (let ((compile-command (format "gcc -Og -c %s; objdump -d %s.o; rm %s.o"
                                  buffer-file-name
                                  (file-name-sans-extension buffer-file-name)
-                                 (file-name-sans-extension buffer-file-name))))
-    (call-interactively 'nvp-basic-compile)))
+                                 (file-name-sans-extension buffer-file-name)))
+        compilation-scroll-output)
+    (with-current-buffer (call-interactively 'nvp-basic-compile)
+      (pop-to-buffer (current-buffer))
+      (setq-local imenu-generic-expression '((nil "^[0-9]+ <\\([^>]+\\)>:" 1)))
+      (add-hook 'compilation-finish-functions
+                (lambda (_b _s)
+                  (search-forward "Disassembly" nil 'move 1))
+                nil 'local))))
 
 ;; -------------------------------------------------------------------
 ;;; Headers
