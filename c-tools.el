@@ -303,6 +303,8 @@
 
 ;; dump objects in compilation buffer, setup imenu for function jumps
 ;; FIXME: add tab/backtab movement
+;; (autoload 'gdb-disassembly-mode "gdb-mi")
+(declare-function objdump-mode "objdump")
 (defun c-tools-compile-objdump ()
   (interactive)
   (let ((compile-command (format "gcc -Og -c %s; objdump -d %s.o; rm %s.o"
@@ -312,6 +314,8 @@
         compilation-scroll-output)
     (with-current-buffer (call-interactively 'nvp-basic-compile)
       (pop-to-buffer (current-buffer))
+      ;; (gdb-disassembly-mode)
+      (objdump-mode)
       (setq-local imenu-generic-expression '((nil "^[0-9]+ <\\([^>]+\\)>:" 1)))
       (add-hook 'compilation-finish-functions
                 (lambda (_b _s)

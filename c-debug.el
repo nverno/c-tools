@@ -72,6 +72,7 @@
       ("t" gud-tbreak "tbreak")
       ("b" gud-break "break")
       ("d" gud-remove "remove")
+      ("D" )
       ("J" gud-jump "jump")
       ("p" gud-print "print")
       ("m" gud-until "move")
