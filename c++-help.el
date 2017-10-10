@@ -77,5 +77,12 @@
 	(browse-url (format (cdr ref) cpptype))
       (message "No documentation source found for %s" cpptype))))
 
+;;;###autoload
+(defun c++-help (point)
+  (interactive "d")
+  (let ((cpptype (c++-help-type-at point)))
+    (when cpptype
+      (funcall-interactively 'manual-entry cpptype))))
+
 (provide 'c++-help)
 ;;; c++-help.el ends here
