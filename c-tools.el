@@ -322,6 +322,31 @@
                   (search-forward "Disassembly" nil 'move 1))
                 nil 'local))))
 
+(defun c-tools-compile-strace (&optional arg)
+  (interactive "P")
+  (let* ((prog (file-name-sans-extension buffer-file-name))
+         (strace-file (concat prog ".strace"))
+         (compile-command (format (nvp-concat "gcc -Og %s -o %s; "
+                                              "strace -o %s %s %s")
+                                  buffer-file-name
+                                  prog
+                                  strace-file
+                                  prog
+                                  (if arg
+                                      (read-from-minibuffer
+                                       "Additional arguments to function: ")
+                                    "")))
+         compilation-scroll-output)
+    (with-current-buffer (call-interactively 'nvp-basic-compile)
+      (pop-to-buffer (current-buffer))
+      (add-hook 'compilation-finish-functions
+                (lambda (_b _s)
+                  (find-file-other-window strace-file)
+                  (add-hook 'kill-buffer-hook
+                            (lambda () (delete-file buffer-file-name))
+                            nil 'local))
+                nil 'local))))
+  
 ;; -------------------------------------------------------------------
 ;;; Headers
 
