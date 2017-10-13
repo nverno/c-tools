@@ -31,14 +31,15 @@
 ;;; Font-locking
 
 (defvar strace-font-lock-keywords
-  `(("[A-Z_][A-Z_]+" . font-lock-variable-name-face)              ;macros
+  `(("\\(\\_<[A-DF-Z_][A-Z_]+\\_>\\)" . (1 font-lock-variable-name-face)) ;macros
     ("^\\([a-zA-Z0-9_]+\\)\(" . (1 font-lock-function-name-face)) ;functions
     ("^\\([0-9]+\\) " . (1 font-lock-warning-face))
-    ("^[0-9]+ \\([a-zA-Z0-9_]*\\)(" . (1 font-lock-constant-face))
+    ;; ("^[0-9]+ \\([a-zA-Z0-9_]*\\)(" . (1 font-lock-constant-face))
     (" = \\(0x[[:xdigit:]]+\\).*$" . (1 font-lock-type-face))
     (" = \\(-?[[:digit:]?]+\\).*$" . (1 font-lock-type-face))
     ;; (" = 0x[[:xdigit:]]+ \\([[:upper:]]+\\).*$" . (1 font-lock-negation-char-face))
     ;; (" = -?[[:digit:]?]+ \\([[:upper:]]+\\).*$" . (1 font-lock-negation-char-face))
+    ("E[A-Z_]+" . font-lock-warning-face)
     (" \\((.*)\\)$" . (1 font-lock-comment-face))))
 
 ;; -------------------------------------------------------------------
@@ -54,8 +55,8 @@
       (align-regexp (point-min) (point-max) re))))
 
 ;; show man page for command on current line
-(defun strace-mode-help-at-point (point)
-  (interactive "p")
+(defun strace-mode-help-at-point ()
+  (interactive)
   (save-excursion
     (beginning-of-line)
     (and (looking-at "\\([a-z_]+\\)\(")
@@ -66,6 +67,8 @@
 
 (defvar strace-mode-syntax-table
   (let ((st (make-syntax-table)))
+    (modify-syntax-entry ?| "." st)
+    (modify-syntax-entry ?= "." st)
     (modify-syntax-entry ?\" "\"" st)
     (modify-syntax-entry ?\* ". 23" st) ;c-style comments 
     (modify-syntax-entry ?/ ". 124b" st)
