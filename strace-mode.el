@@ -70,6 +70,7 @@
     (modify-syntax-entry ?| "." st)
     (modify-syntax-entry ?= "." st)
     (modify-syntax-entry ?\" "\"" st)
+    (modify-syntax-entry ?\\ "\\" st)
     (modify-syntax-entry ?\* ". 23" st) ;c-style comments 
     (modify-syntax-entry ?/ ". 124b" st)
     (modify-syntax-entry ?\n "> b" st)
