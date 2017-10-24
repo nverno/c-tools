@@ -69,6 +69,7 @@
       ("k" previous-line)
       ("l" forward-char)
       ;; gud
+      ("m" gud-many-windows "many-windows mode")
       ("t" gud-tbreak "tbreak")
       ("b" gud-break "break")
       ("d" gud-remove "remove")
