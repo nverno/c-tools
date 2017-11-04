@@ -31,6 +31,9 @@
   (require 'cl-lib))
 (require 'semantic/analyze)
 
+;; -------------------------------------------------------------------
+;;; Sources
+
 ;; sources determined by source file paths
 (defvar c-help-online-sources
   (let ((uri
@@ -48,6 +51,25 @@
       "/usr/include/signal") . (man "2 %s"))
     (,semantic-c-dependency-system-include-path . (man "3 %s"))))
 
+;; -------------------------------------------------------------------
+;;; Util
+
+;; semantic tag at point
+(defsubst c-help-tag-at (point)
+  (condition-case nil
+      (car (reverse (oref (semantic-analyze-current-context point) prefix)))
+    (error (message "No symbol found at point"))))
+
+;; return name of function at point and if it is static
+(defsubst c-help-function-at-point ()
+  (ignore-errors
+    (let ((tag (semantic-current-tag)))
+      (when (and tag (eq (cadr tag) 'function))
+        (let ((mods (alist-get :typemodifiers (cdr tag))))
+          (if (and mods (member "static" (car mods)))
+              (list (car tag) 'static)
+            (list (car tag))))))))
+
 (eval-when-compile
   (defmacro c-help-find-source (type file)
     "Find help location for TYPE as determined by FILE."
@@ -63,10 +85,6 @@
           (lambda (entry)
             (cl-some (lambda (e) (string-match-p e ,file)) (car entry)))
           c-help-local-sources))))))
-
-;; semantic tag at point
-(defsubst c-help-tag-at (point)
-  (car (reverse (oref (semantic-analyze-current-context point) prefix))))
 
 ;; TODO: if 'man 2' doesn't work, try 'man 3', eg. execvp in unistd
 ;;      - how to hook into Man to know if there was a problem?
@@ -86,6 +104,9 @@
                 (`"2" "3")
                 (`"3" "2"))
               (substring cmd 1)))))))
+
+;; -------------------------------------------------------------------
+;;; Commands
 
 ;; Lookup info in man or online for thing at point
 ;;;###autoload
@@ -116,6 +137,20 @@
 (defun c-help-std ()
   (interactive)
   (browse-url "http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf"))
+
+;; jump to function in header file
+;;;###autoload
+(defun c-help-jump-to-function-header ()
+  (interactive)
+  (let ((func (c-help-function-at-point))
+        (header (c-tools--header-file-name)))
+    ;; don't try for static functions
+    (if (and func (not (cdr func)) header)
+        (progn
+          (find-file-other-window header)
+          (goto-char (point-min))
+          (search-forward (car func) nil 'move))
+      (message "function %s is static" (car func)))))
 
 (provide 'c-help)
 ;;; c-help.el ends here

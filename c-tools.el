@@ -95,6 +95,10 @@
         (cadr (split-string s (or file buffer-file-name) t " "))))
      sigs)))
 
+;; associated header file name
+(defsubst c-tools--header-file-name (&optional buffer)
+  (concat (file-name-sans-extension (or buffer buffer-file-name)) ".h"))
+
 ;; ------------------------------------------------------------
 ;;; Install
 
@@ -356,10 +360,19 @@
 (declare-function yas-expand-snippet "yasnippet")
 (declare-function yas-lookup-snippet "yasnippet")
 
+;; jump to associated header, with arg create and/or update it as well
+(defun c-tools-jump-or-update-header (update)
+  (interactive "P")
+  (if update
+      (call-interactively 'c-tools-create-or-update-header)
+    (condition-case nil
+        
+        (find-file-other-window (c-tools--header-file-name)))))
+
 ;;; Create/update header file with function signatures
 (defun c-tools-create-or-update-header (and-go)
   (interactive (list t))
-  (let ((header (concat (file-name-sans-extension buffer-file-name) ".h"))
+  (let ((header (c-tools--header-file))
         (sigs (c-tools-function-signatures))
         (yas-wrap-around-region nil)
         (init t))
