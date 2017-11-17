@@ -59,7 +59,7 @@
   (interactive)
   (save-excursion
     (beginning-of-line)
-    (and (looking-at "\\([a-z_]+\\)\(")
+    (and (looking-at "[0-9]+\\s-*\\([a-z_]+\\)\(")
          (man (concat "2 " (match-string 1))))))
 
 ;; -------------------------------------------------------------------
