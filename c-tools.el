@@ -372,7 +372,7 @@
 ;;; Create/update header file with function signatures
 (defun c-tools-create-or-update-header (and-go)
   (interactive (list t))
-  (let ((header (c-tools--header-file))
+  (let ((header (c-tools--header-file-name))
         (sigs (c-tools-function-signatures))
         (yas-wrap-around-region nil)
         (init t))
