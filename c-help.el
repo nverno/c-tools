@@ -108,6 +108,35 @@
 ;; -------------------------------------------------------------------
 ;;; Commands
 
+(declare-function xref-push-marker-stack "xref")
+(declare-function xref-pop-marker-stack "xref")
+
+;; wrapper function: use xref marker stack before `semantic-ia-fast-jump'
+;;;###autoload
+(defun c-help-semantic-ia-fast-jump (point)
+  (interactive "d")
+  (xref-push-marker-stack)
+  (condition-case nil
+      (semantic-ia-fast-jump point)
+    (error (xref-pop-marker-stack))))
+
+;; get semantic-ia snarfed doc
+(defun c-help-semantic-ia-doc (point)
+  (let* ((ctxt (semantic-analyze-current-context point))
+         (pf (reverse (oref ctxt prefix)))) ;prefix
+    (cond
+     ;; ((stringp (car pf))
+     ;;  (message "Incomplete symbol name."))
+     ((semantic-tag-p (car pf))
+      (semantic-documentation-for-tag (car pf))))))
+
+;;;###autoload
+(defun c-help-semantic-ia-popup-doc (point)
+  (interactive "d")
+  (let ((doc (c-help-semantic-ia-doc point)))
+    (when doc
+      (nvp-with-toggled-tip doc))))
+
 ;; Lookup info in man or online for thing at point
 ;;;###autoload
 (defun c-help-at-point (point &optional online)
