@@ -47,7 +47,7 @@
 ;;   Should do env., snippets, abbrevs, etc all together.
 
 (nvp-package-dir c-tools--dir)
-(nvp-package-load-snippets c-tools--dir)
+(nvp-package-load-snippets c-tools--dir) 
 
 (defvar-local c-tools-local-include-paths nil)
 (setq-default c-tools-local-include-paths '("." ".." "../include"))
