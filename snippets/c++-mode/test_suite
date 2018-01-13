@@ -3,7 +3,7 @@
 # key: ts
 # group: testing
 # --
-BOOST_AUTO_TEST_SUITE( ${1:test_suite1} )
+BOOST_AUTO_TEST_SUITE(${1:test_suite1})
 
 $0
 
