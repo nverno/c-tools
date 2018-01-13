@@ -2,11 +2,11 @@
 # name: fork
 # key: fork
 # --
-if ( (${1:pid} = fork()) == -1 ) {
-  perror( "fork" );
-  exit( EXIT_FAILURE );
+if ((${1:pid} = fork()) == -1) {
+  perror("fork");
+  exit(EXIT_FAILURE);
 }
-if ( pid == 0 ) { /* child */
+if (pid == 0) { /* child */
   $2
 } else {          /* parent */
   $0

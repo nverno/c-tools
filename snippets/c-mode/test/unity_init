@@ -12,7 +12,7 @@ void test_${2:name}(void) {
 int main(void) {
   UNITY_BEGIN();
 
-  RUN_TEST( test_$2 );
+  RUN_TEST(test_$2);
 
   return UNITY_END();
 }

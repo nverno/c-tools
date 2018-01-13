@@ -3,6 +3,6 @@
 # key: die_file
 # --
 void die(const char *file) {
-  fprintf( stderr, "%s: %s\n", file, strerror(errno) );
-  exit( EXIT_FAILURE );
+    fprintf(stderr, "%s: %s\n", file, strerror(errno));
+    exit(EXIT_FAILURE);
 }

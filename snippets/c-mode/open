@@ -2,7 +2,7 @@
 # name: open
 # key: open
 # --
-if ( (${1:fd} = open( ${2:file}, ${3:O_CREAT}, 0644)) == -1 ) {
-  perror( "open" );
-  exit( EXIT_FAILURE );
+if ((${1:fd} = open(${2:file}, ${3:O_CREAT}, 0644)) == -1) {
+  perror("open");
+  exit(EXIT_FAILURE);
 }

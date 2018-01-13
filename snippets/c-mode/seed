@@ -2,4 +2,4 @@
 # name: seed
 # key: seed
 # --
-srand( time( NULL ) );
+srand(time(NULL));

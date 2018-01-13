@@ -2,7 +2,7 @@
 # name: close
 # key: close
 # --
-if ( close( ${1:fd} ) == -1 ) {
-  perror( "close" );
-  exit( EXIT_FAILURE );
+if (close(${1:fd}) == -1) {
+    perror("close");
+    exit(EXIT_FAILURE);
 }

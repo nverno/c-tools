@@ -4,6 +4,6 @@
 # --
 va_list ${1:ap};
 
-va_start( $1, ${2:fmt} );
+va_start($1, ${2:fmt});
 $0
-va_end( $1 );
+va_end($1);

@@ -2,7 +2,7 @@
 # name: ifread
 # key: ifread
 # --
-if ( read( ${1:fd}, ${2:buff}, ${3:size} ) == -1 ) { /* read stuff */
-      perror( "read" );
-      exit( EXIT_FAILURE );
+if (read(${1:fd}, ${2:buff}, ${3:size}) == -1) { /* read stuff */
+      perror("read");
+      exit(EXIT_FAILURE);
 }

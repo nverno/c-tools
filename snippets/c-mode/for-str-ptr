@@ -2,6 +2,6 @@
 # name: for-str-ptr
 # key: forptr
 # --
-for ( const char *${1:c} = ${2:str}; *$1; ++$1 ) {
+for (const char *${1:c} = ${2:str}; *$1; ++$1) {
     $0
 }

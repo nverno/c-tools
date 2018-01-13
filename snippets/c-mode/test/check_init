@@ -5,7 +5,7 @@
 #include <check.h>
 #include "../$1.c"
 
-START_TEST ( ${2:test_$1} )
+START_TEST (${2:test_$1})
 {
   $0
 }

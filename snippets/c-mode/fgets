@@ -2,8 +2,8 @@
 # name: fgets
 # key: fgets
 # --
-if ( fgets(${1:char*}, ${2:size}, ${3:stdin}) != NULL ) {
+if (fgets(${1:char*}, ${2:size}, ${3:stdin}) != NULL) {
   $0
 } else {
-  ${fputs( ${4:"error"}, stderr )};
+  ${fputs(${4:"error"}, stderr)};
 }

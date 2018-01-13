@@ -3,9 +3,9 @@
 # key: forks
 # --
 pid_t pid;
-switch( pid = fork() ) {
+switch(pid = fork()) {
 case -1:
-  err_sys( "fork" );
+  err_sys("fork");
 case 0:                         /* child */
   $0
   break;
