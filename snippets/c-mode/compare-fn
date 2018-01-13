@@ -2,8 +2,8 @@
 # name: compare
 # key: compare
 # --
-${1:int} comparator(const void *a, const void *b) {
-  const $1 *x = (const $1 *)a;
-  const $1 *y = (const $1 *)b;
-  return *x - *y;
+int comparator(const void *a, const void *b) {
+    const $1 *x = (const $1 *)a;
+    const $1 *y = (const $1 *)b;
+    return *x - *y;
 }
