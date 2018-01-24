@@ -41,9 +41,6 @@
 
 (define-abbrev-table 'c++-mode-abbrev-table
   '(
-    ("t" "" nil :system t)
-    ("t" "" nil :system t)
-    ("t" "" nil :system t)
     ("th" "this" nil :system t)
     ("usi" ["using std::;" 1 nil nil] expand-abbrev-hook :system t)
     ("veci" "std::vector<int>" nil :system t)
