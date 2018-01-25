@@ -452,7 +452,7 @@
 
 ;; get variable name from declaration, either with type or not
 ;; eg., i = 1 or int i = 1 => `i'
-(defsubst c-yas-var (text)
+(defun c-yas-var (text)
   (if (< (length text) 1)
       ""
    (let* ((str (car (split-string text "=" t " ")))
@@ -460,7 +460,7 @@
      (or (cadr strs) (car strs)))))
 
 ;; convert functions args to doxygen params
-(defsubst c-yas-args-docstring (text)
+(defun c-yas-args-docstring (text)
   (let ((args (c-tools-split-string text)))
     (and args
          (mapconcat 'identity
