@@ -29,6 +29,7 @@
 (eval-when-compile
   (require 'nvp-macro))
 (require 'c-tools)
+(declare-function c-tools-out-file "c-tools")
 
 ;; -------------------------------------------------------------------
 ;;; Commands 

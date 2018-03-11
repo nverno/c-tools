@@ -28,7 +28,8 @@
 ;;; Code:
 (eval-when-compile
   (require 'nvp-macro)
-  (require 'cl-lib))
+  (require 'cl-lib)
+  (defvar semantic-c-dependency-system-include-path))
 (require 'semantic/analyze)
 
 ;; -------------------------------------------------------------------

@@ -29,6 +29,7 @@
 (eval-when-compile
   (require 'nvp-macro)
   (require 'cl-lib)
+  (require 'c-tools)
   (require 'c-test) ;; setup macros
   (defvar boost-test-abbrev-table))
 (require 'nvp-test)
@@ -41,7 +42,7 @@
  (defmacro with-c++-vars (&rest body)
    (declare (indent defun))
    `(nvp-with-project (:test-re ".*test.*\.cpp"
-                                :root '("test" "tests" ".git" ".projectile"))
+                       :root '("test" "tests" ".git" ".projectile"))
       ,@body))
 
  (defmacro setup-c++-test-buffer ()
