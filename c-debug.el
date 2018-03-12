@@ -62,8 +62,8 @@
 
 ;; compiler doesnt understande these functions
 (defhydra c-debug-gud-hydra (:color amaranth
-                                    :pre nvp-indicate-hydra-pre
-                                    :post nvp-indicate-hydra-post)
+                             :pre nvp-indicate-hydra-pre
+                             :post nvp-indicate-hydra-post)
   ;; vi
   ("h" backward-char nil)
   ("j" next-line nil)
