@@ -61,28 +61,29 @@
   ("<f2> d g" . c-debug-gud-hydra/body))
 
 ;; compiler doesnt understande these functions
-(defhydra c-debug-gud-hydra (:color amaranth
-                             :pre nvp-indicate-hydra-pre
-                             :post nvp-indicate-hydra-post)
-  ;; vi
-  ("h" backward-char nil)
-  ("j" next-line nil)
-  ("k" previous-line nil)
-  ("l" forward-char nil)
-  ;; gud
-  ("m" gud-many-windows "many-windows mode")
-  ("t" gud-tbreak "tbreak")
-  ("b" gud-break "break")
-  ("d" gud-remove "remove")
-  ("D" )
-  ("J" gud-jump "jump")
-  ("p" gud-print "print")
-  ("m" gud-until "move")
-  ("n" gud-next "next")
-  ("c" gud-cont "cont")
-  ("o" gud-finish "out")
-  ("r" gud-run "run")
-  ("q" nil "quit"))
+(with-no-warnings
+  (defhydra c-debug-gud-hydra (:color amaranth
+                                      :pre nvp-indicate-hydra-pre
+                                      :post nvp-indicate-hydra-post)
+    ;; vi
+    ("h" backward-char nil)
+    ("j" next-line nil)
+    ("k" previous-line nil)
+    ("l" forward-char nil)
+    ;; gud
+    ("m" gud-many-windows "many-windows mode")
+    ("t" gud-tbreak "tbreak")
+    ("b" gud-break "break")
+    ("d" gud-remove "remove")
+    ;; ("D" )
+    ("J" gud-jump "jump")
+    ("p" gud-print "print")
+    ("m" gud-until "move")
+    ("n" gud-next "next")
+    ("c" gud-cont "cont")
+    ("o" gud-finish "out")
+    ("r" gud-run "run")
+    ("q" nil "quit")))
 (hydra-set-property 'c-debug-gud-hydra :verbosity 1)
 
 (provide 'c-debug)
