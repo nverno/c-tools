@@ -2,4 +2,5 @@
 # name: fprintf
 # key: fprf
 # --
-fprintf(${1:stderr}, "${2:ERROR: }$3%s\n", $0);
+fprintf(${1:stderr}, "${2:%s}\\n"${2:$(if (string-match "%" yas-text)", " "\);")
+}${2:$(if (string-match "%" yas-text) "\);" "")}
