@@ -467,6 +467,12 @@
                     (mapcar (lambda (s) (concat "\n * @param " s)) args) ""))))
 
 ;; -------------------------------------------------------------------
+;;; Abbrevs
+
+(defun nvp-c-abbrev-expand-p ()
+  (not (memq last-input-event '(?_))))
+
+;; -------------------------------------------------------------------
 (declare-function c-beginning-of-defun "cc-cmds")
 (declare-function c-mark-function "cc-cmds")
 

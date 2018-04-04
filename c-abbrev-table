@@ -15,7 +15,9 @@
   '(
     ("td" "typedef" nil :system t)
     ("ret" "return" nil :system t)
+    ("null" "NULL" nil :system t)
     )
+  :enable-function 'nvp-c-abbrev-expand-p
   :parents (list c-macros-includes-abbrev-table))
 
 (define-abbrev-table 'c-mode-abbrev-table
@@ -23,10 +25,12 @@
     ("ef" "EXIT_FAILURE" nil :system t)
     ("es" "EXIT_SUCCESS" nil :system t)
     ("szt" "size_t" nil :system t)
-    ("null" "NULL" nil :system t)
+    ("prn" "printf(\"\\n\")" nil :system t)
+    ("fprn" "fprintf(stderr, \"\\n\")" nil :system t)
     ("exitf" "exit(EXIT_FAILURE);" nil :system t)
     ("exits" "exit(EXIT_SUCCESS);" nil :system t))
   "C-mode abbrevs."
+  :enable-function 'nvp-c-abbrev-expand-p
   :parents (list c-common-abbrev-table))
 
 (define-abbrev-table 'c/R-abbrev-table

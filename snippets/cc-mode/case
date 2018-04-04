@@ -2,7 +2,6 @@
 # name : case : {...}
 # key: case
 # --
-case ${constexpr}: {
+case ${constexpr}: 
   $0
   break;
-}
