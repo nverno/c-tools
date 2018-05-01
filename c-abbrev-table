@@ -3,6 +3,7 @@
   '(("#i" "#include" nil :system t)
     ("#e" "#endif" nil :system t)
     ("#d" "#define" nil :system t)
+    ("#u" "#undef" nil :system t)
     ("#ifd" "#ifdef" nil :system t)
     ("#ifn" "#ifndef" nil :system t)
     ("#max" "#define MAX(A, B) ((A) > (B) ? (A) : (B))" nil :system t)
