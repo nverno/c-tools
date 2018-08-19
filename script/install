@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+# set -o nounset -o pipefail -o errexit
+set -e
+. ~/bin/utils.sh
+. ~/.env 
+
+install_c_libs() {
+    # Boost
+    if ! ls /usr/include | grep boost 2>&1 >/dev/null ; then
+        _log "========== Installing boost =========="
+        sudo apt-get install -qq -y libboost-all-dev
+    fi
+}
+
+install_c_tools() {
+    _log "========== Installing C Tools =========="
+
+    # clang cmake check doxygen valgrind kcachegrind flex bison
+    sudo apt-get install -qq -y clang libclang-dev cmake check doxygen \
+         valgrind kcachegrind flex bison
+}
+
+install_c_docs() {
+    _log "========== Install C Docs =========="
+
+    # glibc-doc ncurses-doc
+    sudo apt-get install -qq -y glibc-doc ncurses-doc
+}
+
+install_c_coreutils() {
+    if [ ! -d "$DEVEL/coreutils" ]; then
+        _log "========== Installing C Coreutils Source =========="
+        git clone git://git.savannah.gnu.org/coreutils.git "$DEVEL/coreutils"
+    fi
+}
+
+## -------------------------------------------------------------------
+### Test suites
+
+install_c_unity() {
+    if [ ! -d ~/.local/include/unity ]; then
+        _log "========== Install Unity =========="
+        git clone --depth=1 https://github.com/ThrowTheSwitch/Unity    \
+            ~/.local/include/unity
+    fi
+
+}
+
+install_c_cunit() {
+    if ! ls /usr/include | grep CUnit 2>&1 >/dev/null ; then
+        _log "========== Installing CUnit =========="
+        sudo apt-get install -qq -y libcunit1 libcunit1-doc libcunit1-dev
+    fi
+}
+
+## -------------------------------------------------------------------
+### All the things
+
+install_c_all() {
+    sudo apt-get -qq update
+    # from apt
+    install_c_libs
+    install_c_tools
+    install_c_docs
+    # source code
+    install_c_coreutils
+    # tests
+    install_c_unity
+    install_c_cunit
+}
+
+"$@"

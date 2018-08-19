@@ -19,12 +19,13 @@ if [[ $OS == "Windows_NT" ]]; then
     # gpp="c:/msys/ming64/bin/c++.exe"
 fi
 
-#--- Print sys includes ----------------------------------------------
+## -------------------------------------------------------------------
+### Print system includes 
 
 sys_includes () {
     case $1 in
         --help|-h)
-            exec echo -e "usage: $0 [gcc|cc|c|g++|cpp|c++]"\
+            exec echo -e "usage: $0 [gcc|cc|c|g++|cpp|c++]" \
                  "or location of compiler";;
         gcc|cc|c)
             mg=$gcc
@@ -41,7 +42,7 @@ sys_includes () {
     esac
     echo $prog | $mg -v -x$lang -c - -o /dev/stdout 2>&1 |
         # remove excessive dots, print system includes
-        sed -e ':1;s,/[^/.][^/]*/\.\./,/,;t 1' \
+        sed -e ':1;s,/[^/.][^/]*/\.\./,/,;t 1'              \
             -n -e '/#include </, /End/{/^ /p}' |
         # trim spaces and quote paths
         sed 's/ *\(.*\) *$/"\1"/'
@@ -50,13 +51,14 @@ sys_includes () {
 clang_includes () {
     clang++ -E -x $1 - -v </dev/null 2>&1 |
         # remove excessive dots, print system includes
-        sed -e ':1;s,/[^/.][^/]*/\.\./,/,;t 1' \
+        sed -e ':1;s,/[^/.][^/]*/\.\./,/,;t 1'              \
             -n -e '/#include </, /End/{/^ /p}' |
         # trim spaces and quote paths
         sed 's/ *\(.*\) *$/"\1"/'
 }
 
-#--- Write as lisp config  -------------------------------------------
+## -------------------------------------------------------------------
+### Write as lisp config 
 
 make_sys_includes () {
     printf ";;; c/c++ system includes"                                    > $conf
@@ -83,5 +85,4 @@ make_sys_includes () {
     printf "(provide 'c-tools-include)" >> $conf
 }
 
-#--- read inputs -----------------------------------------------------
 "$@"
