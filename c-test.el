@@ -78,13 +78,13 @@ is non-nil."
                       (concat "./" (file-name-nondirectory out)
                               "; rm " out))))
                 (compilation-read-command nil))
-           (call-interactively 'compile)))))
+           (call-interactively 'compile))))))
 
-  ;; assume first path will be root, eg ~/.local/include:etc
-  (defmacro c-local-include-path (path)
-    `(expand-file-name
-      ,path
-      (car (split-string (getenv "C_INCLUDE_PATH") path-separator t " ")))))
+;; assume first path will be root, eg ~/.local/include:etc
+(defun c-local-include-path (path)
+  (expand-file-name
+   path
+   (car (split-string (getenv "C_INCLUDE_PATH") path-separator t " "))))
 
 ;; -------------------------------------------------------------------
 ;;; Setup Tests
@@ -154,8 +154,9 @@ is non-nil."
   (interactive
    (list (if (nvp-test-file-p)
              (buffer-file-name)
-           (or (nvp-test-find-matching-test
-                (buffer-file-name) (nvp-test-dir 'local))
+           (or (ignore-errors
+                 (nvp-test-find-matching-test
+                  (buffer-file-name) (nvp-test-dir 'local)))
                (buffer-file-name)))))
   (funcall-interactively
    nvp-test-run-unit-function current-prefix-arg
