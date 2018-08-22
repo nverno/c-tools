@@ -48,7 +48,6 @@
                              'comint-line-beginning-position)
   (nvp-comint-setup-history ".gdb_history"))
 
-;;;###autoload(nvp-gud-repl-switch "c-debug")
 (nvp-repl-switch "gud" (:repl-mode 'gud-mode
                         :switch-fn 'pop-to-buffer
                         :repl-find-fn
@@ -58,6 +57,8 @@
   ;; FIXME: how to get the buffer returned from interactive call
   ;; and add source buffer property after GDB has started?
   (call-interactively 'gdb))
+
+;;;###autoload(autoload 'nvp-gud-repl-switch "c-debug")
 
 ;; -------------------------------------------------------------------
 ;;; GDB Hydra
