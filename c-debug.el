@@ -27,33 +27,40 @@
 ;;; Commentary:
 ;;; Code:
 (eval-when-compile
-  (require 'nvp-macro)
-  (defvar c-mode-map)
-  (defvar c++-mode-map))
+  (require 'nvp-macro))
 (require 'nvp-indicate)
 (require 'gud)
 (eval-and-compile
   (require 'hydra))
 
+;; -------------------------------------------------------------------
+;;; GDB REPL
+
 ;;; FIXME: gud-mode seems to clobber kill-buffer-hooks,
 ;;         so shell history isn't being saved/read properly
 (declare-function hippie-expand-shell-setup "hippie-expand-shell")
 (declare-function nvp-comint-setup-history "nvp-comint")
+
 ;;;###autoload
-(defun c-debug-shell-setup ()
+(defun nvp-gud-repl-setup ()
   (require 'nvp-comint)
   (hippie-expand-shell-setup 'comint-input-ring
                              'comint-line-beginning-position)
   (nvp-comint-setup-history ".gdb_history"))
 
-;;;###autoload
-(defun c-debug-gud-switch ()
-  (interactive)
-  (if gud-comint-buffer
-      (pop-to-buffer gud-comint-buffer)
-    (user-error "No gud buffer")))
+;;;###autoload(nvp-gud-repl-switch "c-debug")
+(nvp-repl-switch "gud" (:repl-mode 'gud-mode
+                        :switch-fn 'pop-to-buffer
+                        :repl-find-fn
+                        #'(lambda ()
+                            (and (comint-check-proc gud-comint-buffer)
+                                 gud-comint-buffer)))
+  ;; FIXME: how to get the buffer returned from interactive call
+  ;; and add source buffer property after GDB has started?
+  (call-interactively 'gdb))
 
-;;; Help menu
+;; -------------------------------------------------------------------
+;;; GDB Hydra
 
 (nvp-bindings "c-mode" 'cc-mode
   ("<f2> d g" . c-debug-gud-hydra/body))
