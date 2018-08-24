@@ -49,7 +49,6 @@
   (nvp-comint-setup-history ".gdb_history"))
 
 (nvp-repl-switch "gud" (:repl-mode 'gud-mode
-                        :switch-fn 'pop-to-buffer
                         :repl-find-fn
                         #'(lambda ()
                             (and (comint-check-proc gud-comint-buffer)
