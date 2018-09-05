@@ -85,15 +85,23 @@
           (nvp-with-gnu/w32 ".out" ".exe")))
 
 ;; pull out functions signatures from current buffer using ctags
-(defun c-tools-function-signatures (&optional file)
-  (let ((sigs (process-lines (nvp-program "ctags") "-x" "--c-kinds=fp"
-                             (or file buffer-file-name))))
-    (mapcar
-     (lambda (s)
-       (replace-regexp-in-string
-        "[ \t;{]*$" ""
-        (cadr (split-string s (or file buffer-file-name) t " "))))
-     sigs)))
+(defun c-tools-function-signatures (&optional file ignore-main ignore-static)
+  (when-let* ((sigs (process-lines
+               (nvp-program "ctags" 'no-compile) "-x" "--c-kinds=fp"
+               (or file buffer-file-name)))
+              
+              (res (mapcar
+                    (lambda (s)
+                      (string-trim-left
+                       (replace-regexp-in-string
+                        "[ \t;{]*$" ""
+                        (cadr (split-string s (or file buffer-file-name) t " ")))))
+                    (if ignore-main
+                        (cl-remove-if #'(lambda (s) (string-prefix-p "main" s)) sigs)
+                      sigs))))
+    (if ignore-static
+        (cl-remove-if #'(lambda (s) (string-match-p "\\_<static\\_>" s)) res)
+      res)))
 
 ;; associated header file name
 (defsubst c-tools--header-file-name (&optional buffer)
@@ -373,7 +381,7 @@
 (defun c-tools-create-or-update-header (and-go)
   (interactive (list t))
   (let ((header (c-tools--header-file-name))
-        (sigs (c-tools-function-signatures))
+        (sigs (c-tools-function-signatures nil 'ignore-main 'ignore-static))
         (yas-wrap-around-region nil)
         (init t))
     (when (file-exists-p header)
@@ -382,27 +390,23 @@
             ;; remove any signatures that are already found in the header file
             (cl-set-difference
              sigs
-             (c-tools-function-signatures header)
-             :test 'string=)))
+             (c-tools-function-signatures header) :test 'string=)))
     (when sigs
       (with-current-buffer (find-file header)
-        (setq sigs (concat "\n" (mapconcat 'identity sigs ";\n") ";"))
+        (setq sigs (concat "\n" (mapconcat 'identity sigs ";\n") ";\n"))
         (if init
             (let ((yas-selected-text sigs))
               (yas-expand-snippet
                (yas-lookup-snippet "header" 'cc-mode)))
-          ;; search forward past #define HEADER_H
-          (goto-char (point-min))
-          (re-search-forward
-           (concat
-            "#define[ \t]+" (regexp-quote
-                             (concat (upcase (file-name-nondirectory
-                                              (file-name-sans-extension header)))
-                                     "_H")))
-           nil 'move)
-          (insert sigs))))
-    (if and-go
-        (find-file header))))
+          ;; insert at end, before final #endif
+          (goto-char (point-max))
+          (skip-chars-backward " \t\n\r\v") ;skip any trailing whitespace
+          (forward-line -1)
+          nil 'move)
+        (insert sigs)))
+    (when and-go
+      (xref-push-marker-stack)
+      (find-file header))))
 
 ;; add header guard
 (defun c-tools-add-guard ()
