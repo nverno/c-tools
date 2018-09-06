@@ -391,13 +391,14 @@
             (cl-set-difference
              sigs
              (c-tools-function-signatures header) :test 'string=)))
-    (when sigs
+    (when (or init sigs)
       (with-current-buffer (find-file header)
         (setq sigs (concat "\n" (mapconcat 'identity sigs ";\n") ";\n"))
         (if init
-            (let ((yas-selected-text sigs))
-              (yas-expand-snippet
-               (yas-lookup-snippet "header" 'cc-mode)))
+            ;; let ((yas-selected-text sigs))
+            (yas-expand-snippet
+             (yas-lookup-snippet "header" 'cc-mode)
+             nil nil `((function-signatures ,sigs)))
           ;; insert at end, before final #endif
           (goto-char (point-max))
           (skip-chars-backward " \t\n\r\v") ;skip any trailing whitespace
