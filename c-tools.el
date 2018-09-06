@@ -393,7 +393,8 @@
              (c-tools-function-signatures header) :test 'string=)))
     (when (or init sigs)
       (with-current-buffer (find-file header)
-        (setq sigs (concat "\n" (mapconcat 'identity sigs ";\n") ";\n"))
+        (and sigs
+             (setq sigs (concat "\n" (mapconcat 'identity sigs ";\n") ";\n")))
         (if init
             ;; let ((yas-selected-text sigs))
             (yas-expand-snippet
@@ -403,8 +404,7 @@
           (goto-char (point-max))
           (skip-chars-backward " \t\n\r\v") ;skip any trailing whitespace
           (forward-line -1)
-          nil 'move)
-        (insert sigs)))
+          (insert sigs))))
     (when and-go
       (xref-push-marker-stack)
       (find-file header))))

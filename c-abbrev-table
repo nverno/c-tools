@@ -16,6 +16,7 @@
   '(
     ("td" "typedef" nil :system t)
     ("ret" "return" nil :system t)
+    ("cont" "continue" nil :system t)
     ("null" "NULL" nil :system t)
     )
   :enable-function 'nvp-c-abbrev-expand-p
