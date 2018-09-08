@@ -36,6 +36,9 @@
   (defvar gud-comint-buffer)
   (defvar irony-server-install-prefix)
   (defvar nvp-abbrev-local-table))
+
+(declare-function xref-push-marker-stack "xref")
+
 (autoload 'nvp-log "nvp-log")
 (autoload 'nvp-ext-sudo-command "nvp-ext")
 (autoload 'nvp-compile-basic "nvp-compile")
