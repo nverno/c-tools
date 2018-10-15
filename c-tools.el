@@ -282,7 +282,7 @@
                       post-action (concat "./" out))
                   (unless keep (concat "; rm " out)))))
     (setq-local compile-command command)
-    (call-interactively 'nvp-compile-basic)))
+    (funcall-interactively 'nvp-compile-basic nil current-prefix-arg)))
 
 ;; watch error output with TEST
 (defun c-tools-compile-watch (arg)
