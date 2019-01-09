@@ -48,7 +48,7 @@
  (defmacro setup-c++-test-buffer ()
    `(progn
       (setq-local local-abbrev-table boost-test-abbrev-table)
-      (nvp-with-local-bindings
+      (nvp-use-local-bindings
         ("C-c C-c" . c++-test-run-unit-test)))))
 
 ;; -------------------------------------------------------------------

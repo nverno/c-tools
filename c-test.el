@@ -53,7 +53,7 @@
        (setq-local local-abbrev-table (symbol-value
                                        (intern (concat ,type "-abbrev-table"))))
        (setq-local nvp-abbrev-local-table ,type)
-       (nvp-with-local-bindings
+       (nvp-use-local-bindings
          ("C-c C-c" . c-test-run-unit-test))))
 
   ;; generate function to run unit tests
@@ -84,7 +84,8 @@ is non-nil."
 (defun c-local-include-path (path)
   (expand-file-name
    path
-   (car (split-string (getenv "C_INCLUDE_PATH") path-separator t " "))))
+   (car (split-string (or (getenv "C_INCLUDE_PATH")
+                          (getenv "CPATH")) path-separator t " "))))
 
 ;; -------------------------------------------------------------------
 ;;; Setup Tests
