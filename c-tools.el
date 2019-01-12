@@ -38,6 +38,8 @@
   (defvar nvp-abbrev-local-table))
 
 (declare-function xref-push-marker-stack "xref")
+(declare-function c-beginning-of-defun "cc-cmds")
+(declare-function c-mark-function "cc-cmds")
 
 (autoload 'nvp-log "nvp-log")
 (autoload 'nvp-ext-sudo-command "nvp-ext")
@@ -49,8 +51,7 @@
 ;; - Move env setup ffi - R, lisp - to separate file.
 ;;   Should do env., snippets, abbrevs, etc all together.
 
-(nvp-package-dir c-tools--dir)
-(nvp-package-load-snippets c-tools--dir)
+(nvp-package-dir c-tools--dir 'snippets)
 
 (defvar-local c-tools-local-include-paths nil)
 (setq-default c-tools-local-include-paths '("." ".." "../include"))
@@ -479,10 +480,6 @@
 
 (defun nvp-c-abbrev-expand-p ()
   (not (memq last-input-event '(?_))))
-
-;; -------------------------------------------------------------------
-(declare-function c-beginning-of-defun "cc-cmds")
-(declare-function c-mark-function "cc-cmds")
 
 (provide 'c-tools)
 ;;; c-tools.el ends here

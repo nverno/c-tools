@@ -61,24 +61,27 @@
   (defmacro c-test-runner-fn (name &optional c++ flags libs)
     (declare (indent defun))
     (let ((fn (nvp-string-or-symbol name)))
-      `(defun ,fn (save &optional file post-compile)
-         "Run tests in current buffer or FILE. Don't throw away executable if KEEP
+      `(progn
+         ;; (declare-function ,fn (file-name-sans-extension
+         ;;                         (file-name-nondirectory (buffer-file-name))))
+         (defun ,fn (save &optional file post-compile)
+          "Run tests in current buffer or FILE. Don't throw away executable if KEEP
 is non-nil."
-         (interactive "P")
-         (let* ((default-directory (if file (file-name-directory file)
-                                     default-directory))
-                (out (c-tools-out-file file))
-                (compile-command
-                 (concat
-                  (nvp-concat
-                   (nvp-program ,(if c++ "g++" "gcc")) " " ,flags " ")
-                  " -o " out " " (or file buffer-file-name)
-                  (nvp-concat " " ,libs ";")
-                  (or save post-compile
-                      (concat "./" (file-name-nondirectory out)
-                              "; rm " out))))
-                (compilation-read-command nil))
-           (call-interactively 'compile))))))
+          (interactive "P")
+          (let* ((default-directory (if file (file-name-directory file)
+                                      default-directory))
+                 (out (c-tools-out-file file))
+                 (compile-command
+                  (concat
+                   (nvp-concat
+                    (nvp-program ,(if c++ "g++" "gcc")) " " ,flags " ")
+                   " -o " out " " (or file buffer-file-name)
+                   (nvp-concat " " ,libs ";")
+                   (or save post-compile
+                       (concat "./" (file-name-nondirectory out)
+                               "; rm " out))))
+                 (compilation-read-command nil))
+            (call-interactively 'compile)))))))
 
 ;; assume first path will be root, eg ~/.local/include:etc
 (defun c-local-include-path (path)
