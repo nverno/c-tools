@@ -59,6 +59,14 @@
 ;; -------------------------------------------------------------------
 ;;; Util
 
+(defsubst c-tools-out-file (&optional file)
+  (concat (file-name-sans-extension (or file (buffer-file-name)))
+          (nvp-with-gnu/w32 ".out" ".exe")))
+
+;; associated header file name
+(defsubst c-tools--header-file-name (&optional buffer)
+  (concat (file-name-sans-extension (or buffer buffer-file-name)) ".h"))
+
 ;; split string STR on commas, but only when not between <..>
 ;; eg., "std::vector<std::pair<int,int>> i, int j" =>
 ;;      ("std::vector<std::pair<int,int>> i" "int j")
@@ -84,10 +92,6 @@
       (push (string-trim-right (substring str prev)) res)
       (nreverse res))))
 
-(defsubst c-tools-out-file (&optional file)
-  (concat (file-name-sans-extension (or file (buffer-file-name)))
-          (nvp-with-gnu/w32 ".out" ".exe")))
-
 ;; pull out functions signatures from current buffer using ctags
 (defun c-tools-function-signatures (&optional file ignore-main ignore-static)
   (when-let* ((sigs (process-lines
@@ -107,124 +111,32 @@
         (cl-remove-if #'(lambda (s) (string-match-p "\\_<static\\_>" s)) res)
       res)))
 
-;; associated header file name
-(defsubst c-tools--header-file-name (&optional buffer)
-  (concat (file-name-sans-extension (or buffer buffer-file-name)) ".h"))
-
-;; ------------------------------------------------------------
-;;; Install
-
-;; make includes.el and install dependencies or dont with NODEPS
-;; force includes.el refresh with ARG
-(defun c-tools-install (arg &optional includes irony)
-  (interactive "P")
-  (let ((arg arg))
-    (cond
-     (includes 
-      ;; write sys include paths to c-tools-include.el
-      (nvp-with-process-log 
-        (c-tools-install-includes arg) nil
-        (load (expand-file-name "c-tools-include" c-tools--dir))
-        (c-tools-install arg nil 'irony)))
-     (irony
-      ;; install irony server
-      ;; do depends first, also only returns process object on windows
-      ;; currently
-      (if (not (require 'irony nil t))
-          (nvp-log "Error: `irony' not installed")
-        (nvp-with-gnu/w32
-            (c-tools-install-irony)
-          (unless (file-exists-p irony-server-install-prefix)
-            (c-tools-install-irony irony-server-install-prefix)))))
-     (t
-      ;; install dependencies, then recall to install rest
-      (nvp-with-gnu/w32
-          (nvp-with-install-script c-tools--dir "install_c_all" 'sudo
-            (c-tools-install arg 'includes))
-        ;; FIXME: msys / cygwin install cmake/clang
-        (c-tools-install arg 'includes))))))
-
-(nvp-with-gnu
-  ;; install dependencies as sudo and return process object
-  (defun c-tools-install-deps ()
-    (interactive)
-    (nvp-ext-sudo-command
-     nil
-     (expand-file-name "script/install" c-tools--dir))))
-
-;;; Cache system include paths
-;; regen includes after 5 days or force with ARG
-(defun c-tools-install-includes (&optional arg)
-  (let ((includes (expand-file-name "script/define-includes" c-tools--dir)))
-    (when (or (not (file-exists-p includes))
-              (or arg (nvp-file-older-than-days includes 5)))
-      (start-process "bash" "*nvp-install*" "bash"
-                     (expand-file-name "script/define-includes"
-                                       c-tools--dir)
-                     "make_sys_includes"))))
-
-;;; Install irony server
-
-(nvp-with-gnu
-  (defun c-tools-install-irony (&optional check-deps)
-    (if check-deps
-        (nvp-with-process-log
-          (call-interactively 'c-tools-install-deps) :pop-on-error
-          (c-tools-install-irony nil))
-      (if (not (require 'irony nil t))
-          (nvp-log "Error: `irony' not installed")
-        (call-interactively 'irony-install-server)))))
-
-(nvp-with-w32
-  ;; Install irony server using MSYS compilers. Return process object
-  (defun c-tools-install-irony (&optional irony-prefix irony-dir build-cmd)
-    (let* ((irony-dir (or irony-dir
-                          (expand-file-name "server"
-                                            (file-name-directory
-                                             (locate-library "irony")))))
-           (build-dir (make-temp-file "_build" t))
-           (irony-prefix (or irony-prefix
-                             (expand-file-name ".emacs.d/cache/irony" "~")))
-           (args (mapconcat 'identity
-                            `(,irony-dir
-                              "-G \"MSYS Makefiles\""
-                              "-DCMAKE_CXX_COMPILER=g++.exe"
-                              "-DCMAKE_C_COMPILER=gcc.exe"
-                              ,(concat "-DCMAKE_INSTALL_PREFIX=" irony-prefix))
-                            " "))
-           (build-cmd
-            "cmake --build . --use-stderr --config Release --target install")
-           (default-directory build-dir))
-      (start-process-shell-command
-       "cmake" "*nvp-install*" (format "cmake %s && %s" args build-cmd)))))
-
 ;; -------------------------------------------------------------------
 ;;; Environment
 
 (autoload 'asdf-where "asdf")
+(autoload 'nvp-env-add "nvp-env")
+
+(defvar c-tools-ext-includes
+  '(("unity" (expand-file-name ".local/include/unity/src" (getenv "HOME"))
+     "/unity/src")
+    ("R"     (expand-file-name "lib/R/include" (asdf-where "R")) "/R/include")
+    ("emacs" emacs-src-dir "/emacs/src"))
+  "Paths to external includes.")
 
 ;; set environment stuff for macro expanding
 ;; could also set local `c-macro-preprocessor'?
 (defun c-tools-setenv (type)
+  "Add include path of TYPE to macroexpand all the shittles."
   (interactive
-   (list (ido-completing-read "Set include path for: " '("unity" "R"))))
-  (let ((env (getenv "C_INCLUDE_PATH")))
-    (pcase type
-      (`"unity"
-       ;; add path to unity source to macroexpand all the shittles
-       (unless (string-match-p "unity" env)
-         (setenv "C_INCLUDE_PATH"
-                 (concat env ":" (expand-file-name
-                                  ".local/include/unity/src" (getenv "HOME"))))))
+   (list (ido-completing-read "Add include path for: " c-tools-ext-includes)))
+  (cl-destructuring-bind (kind loc regex) (assoc-string type c-tools-ext-includes)
+    (pcase kind
       (`"R"
-       (unless (string-match-p "/R/include" env)
-         (setenv "C_INCLUDE_PATH"
-                 (concat
-                  env ":"
-                  (expand-file-name "lib/R/include" (asdf-where "R" 'current)))))
        (setq-local local-abbrev-table c/R-abbrev-table)
        (setq-local nvp-abbrev-local-table "c/R"))
-      (_ ()))))
+      (_ nil))
+    (nvp-env-add "C_INCLUDE_PATH" (eval loc) regex)))
 
 ;; ------------------------------------------------------------
 ;;; Commands

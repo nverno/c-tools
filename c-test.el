@@ -34,6 +34,7 @@
   (defvar unity-abbrev-table)
   (defvar nvp-abbrev-local-table))
 (require 'nvp-test)
+(require 'c-tools)
 (autoload 'yas-expand "yasnippet")
 (autoload 'clang-complete-create-or-update "clang-complete")
 
@@ -50,8 +51,8 @@
   ;; locally set keys in test buffers to run tests
   (defmacro setup-c-test-buffer (type)
     `(progn
-       (setq-local local-abbrev-table (symbol-value
-                                       (intern (concat ,type "-abbrev-table"))))
+       (setq-local local-abbrev-table
+                   (symbol-value (intern (concat ,type "-abbrev-table"))))
        (setq-local nvp-abbrev-local-table ,type)
        (nvp-use-local-bindings
          ("C-c C-c" . c-test-run-unit-test))))
@@ -62,8 +63,7 @@
     (declare (indent defun))
     (let ((fn (nvp-string-or-symbol name)))
       `(progn
-         ;; (declare-function ,fn (file-name-sans-extension
-         ;;                         (file-name-nondirectory (buffer-file-name))))
+         ;; (,'declare-function ,fn "")
          (defun ,fn (save &optional file post-compile)
           "Run tests in current buffer or FILE. Don't throw away executable if KEEP
 is non-nil."
