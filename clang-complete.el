@@ -1,11 +1,13 @@
-;;; clang-complete ---  -*- lexical-binding: t; -*-
+;;; clang-complete.el --- Manage .clang_complete file -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
+;; Maintainer: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
 ;; Package-Requires: 
 ;; Created:  2 February 2017
+;; Version:  0.0.1
 
 ;; This file is not part of GNU Emacs.
 ;;
@@ -42,18 +44,18 @@
   (defvar nvp-clang-c-include-dirs)
   (defvar nvp-clang-c++-include-dirs))
 (autoload 'nvp-log "nvp-log")
+(autoload 'nvp-env-merge "nvp-env")
 
-;; defaults
-(defvar clang-complete-default-defines '("DEBUG" "TEST"))
+(defvar clang-complete-default-defines '("DEBUG" "TEST")
+  "Default symbols to define in .clang_comlete.")
 
 ;; -------------------------------------------------------------------
 
 ;; get default system includes for c/c++
-(defsubst clang-complete-default-includes (mode &optional system)
+(defun clang-complete-default-includes (mode &optional system)
   (append
-   (split-string
-    (getenv (if (eq mode 'c-mode) "C_INCLUDE_PATH" "CPLUS_INCLUDE_PATH"))
-    path-separator)
+   (nvp-env-merge
+    (if (eq mode 'c-mode) "C_INCLUDE_PATH" "CPLUS_INCLUDE_PATH") "CPATH")
    (and (not system)
         (bound-and-true-p c-tools-local-include-paths))
    (if (eq mode 'c-mode)

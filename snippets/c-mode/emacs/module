@@ -8,8 +8,8 @@ int plugin_is_GPL_compatible;
 
 /* Exposed function */
 static emacs_value
-F${1:function}(emacs_env *env, int nargs, emacs_value args[], void *data) {
-    
+F${1:function}(emacs_env *env, long nargs, emacs_value args[], void *data) {
+    $0
 }
 
 /* bind NAME to function */
