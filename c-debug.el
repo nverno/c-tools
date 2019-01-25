@@ -1,9 +1,10 @@
-;;; c-debug ---  -*- lexical-binding: t; -*-
+;;; c-debug.el --- C debugging -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-debug
+;; Last modified: <2019-01-25 01:44:39>
 ;; Package-Requires: 
 ;; Created: 11 November 2016
 
@@ -28,24 +29,23 @@
 ;;; Code:
 (eval-when-compile
   (require 'nvp-macro))
-(require 'nvp-indicate)
-(require 'gud)
 (eval-and-compile
   (require 'hydra))
+(require 'nvp-indicate)
+(require 'gud)
+(declare-function hippie-expand-shell-setup "hippie-expand-shell")
+(declare-function nvp-comint-setup-history "nvp-comint")
 
 ;; -------------------------------------------------------------------
 ;;; GDB REPL
 
 ;;; FIXME: gud-mode seems to clobber kill-buffer-hooks,
 ;;         so shell history isn't being saved/read properly
-(declare-function hippie-expand-shell-setup "hippie-expand-shell")
-(declare-function nvp-comint-setup-history "nvp-comint")
-
 ;;;###autoload
 (defun nvp-gud-repl-setup ()
   (require 'nvp-comint)
-  (hippie-expand-shell-setup 'comint-input-ring
-                             'comint-line-beginning-position)
+  (hippie-expand-shell-setup :history 'comint-input-ring
+                             :bol-fn 'comint-line-beginning-position)
   (nvp-comint-setup-history ".gdb_history"))
 
 (nvp-repl-switch "gud" (:repl-mode 'gud-mode
