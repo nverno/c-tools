@@ -1,9 +1,10 @@
-;;; c-test ---  -*- lexical-binding: t; -*-
+;;; c-test.el --- C tests -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
+;; Last modified: <2019-01-24 22:38:11>
 ;; Package-Requires: 
 ;; Created: 20 January 2017
 
