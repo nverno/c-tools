@@ -1,9 +1,10 @@
-;;; c++-tools ---  -*- lexical-binding: t; -*-
+;;; c++-tools.el ---  -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
+;; Last modified: <2019-01-26 21:02:23>
 ;; Package-Requires: 
 ;; Created: 11 November 2016
 
