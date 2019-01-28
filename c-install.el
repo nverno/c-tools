@@ -1,9 +1,10 @@
-;;; c-install --- install -*- lexical-binding: t; -*-
+;;; c-install.el --- install -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
+;; Last modified: <2019-01-28 05:46:43>
 ;; Package-Requires: 
 ;; Created: 12 January 2019
 
@@ -64,9 +65,9 @@
     (when (or (not (file-exists-p includes))
               (or arg (nvp-file-older-than-days includes 5)))
       (nvp-with-process "bash"
-        (:proc-name "define-includes"
-         :proc-args ((expand-file-name "script/define-includes" c-tools--dir)
-                     "make_sys_includes"))))))
+        :proc-name "define-includes"
+        :proc-args ((expand-file-name "script/define-includes" c-tools--dir)
+                    "make_sys_includes")))))
 
 ;;; Irony server
 
