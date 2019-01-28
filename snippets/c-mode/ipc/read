@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: read
-# key: read
-# --
-${1:msg} = read(${2:sock_id}, ${3:message}, ${4:BUFSIZE}); /* read stuff */
-if ($1 == -1) {
-  perror("read");
-  exit(EXIT_FAILURE);
-}

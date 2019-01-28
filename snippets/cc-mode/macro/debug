@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: mdebug
+# name: #DEBUG_PRINT
 # key: mdebug
 # --
 #define DEBUG 1

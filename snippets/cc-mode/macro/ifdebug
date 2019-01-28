@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: ifd
-# key: ifdebug
-# --
-#ifdef DEBUG
-  $0
-#endif /* DEBUG */

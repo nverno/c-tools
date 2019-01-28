@@ -1,6 +1,6 @@
 # -*- mode: snippet; -*-
-# name: ifndef
-# key: ifnd
+# name: #ifndef
+# key: mifnd
 # --
 #ifndef $1
   $0

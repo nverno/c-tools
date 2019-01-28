@@ -1,10 +1,10 @@
 # -*- mode: snippet -*-
-# name: if standalone
-# key: ifalone
+# name: #ifdef STANDALONE_ ... main
+# key: mifalone
 # --
 #ifdef STANDALONE_`(upcase (nvp-yas-bfn))`
 int main(int argc, char *argv[]) {
-  $0
-  return EXIT_SUCCESS;
+    $0
+    return EXIT_SUCCESS;
 }
 #endif

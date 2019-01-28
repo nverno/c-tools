@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: write
-# key: write
-# --
-if (write(${1:fd}, $2, ${3:bytes}) == -1) {
-  perror("write");
-  exit(EXIT_FAILURE);
-}

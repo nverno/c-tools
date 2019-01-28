@@ -3,6 +3,6 @@
 # key: connect
 # --
 if (connect(${1:sock_id}, (struct sockaddr *)&${2:servaddr}, sizeof($2)) != 0) {
-  perror("connect");
-  exit(EXIT_FAILURE);
+    perror("connect");
+    exit(EXIT_FAILURE);
 }

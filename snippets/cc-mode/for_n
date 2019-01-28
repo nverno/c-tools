@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: for_n
-# key: forn
-# --
-for (${1:auto i} = ${2:0}; ${1:$(c-yas-var yas-text)} < ${3:MAXIMUM}; ${1:$(c-yas-var yas-text)}${4:++})${5:{
-  $0
-}}

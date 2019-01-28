@@ -3,5 +3,5 @@
 # key: uni
 # --
 union ${1:name} {
-  $0
+    $0
 };

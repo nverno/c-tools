@@ -4,6 +4,6 @@
 # --
 namespace ${1:Namespace} {
 
-          `yas-selected-text`
+    `yas-selected-text`
 
 }  // $1

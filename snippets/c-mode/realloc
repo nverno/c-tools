@@ -2,5 +2,6 @@
 # name: realloc
 # key: realloc
 # --
-if ((${1:ptr} = realloc($1, ${2:$1->size} * sizeof(${3:size_t}))) == NULL)
-  return NULL;
+if ((${1:ptr} = realloc($1, ${2:$1->size} * sizeof(${3:size_t}))) == NULL) {
+    $0
+}

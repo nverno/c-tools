@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: perr
-# key: perr
-# --
-perror("ERROR $1");
-exit(EXIT_FAILURE);
