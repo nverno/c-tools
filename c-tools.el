@@ -1,4 +1,4 @@
-;;; c-tools --- ... -*- lexical-binding: t; -*-
+;;; c-tools.el --- ... -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
@@ -51,7 +51,7 @@
 ;; - Move env setup ffi - R, lisp - to separate file.
 ;;   Should do env., snippets, abbrevs, etc all together.
 
-(nvp-package-dir c-tools--dir 'snippets)
+(nvp-package-define-root :snippets t)
 
 (defvar-local c-tools-local-include-paths nil)
 (setq-default c-tools-local-include-paths '("." ".." "../include"))

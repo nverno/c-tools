@@ -4,7 +4,7 @@
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
-;; Last modified: <2019-01-28 05:46:43>
+;; Last modified: <2019-01-28 22:57:40>
 ;; Package-Requires: 
 ;; Created: 12 January 2019
 
@@ -30,8 +30,8 @@
 
 (eval-when-compile
   (require 'nvp-macro)
-  (require 'cl-lib)
-  (defvar c-tools--dir))
+  (require 'cl-lib))
+(require 'c-tools)
 
 ;; make includes.el and install dependencies or dont with NODEPS
 ;; force includes.el refresh with ARG
@@ -44,7 +44,7 @@
        ;; write sys include paths to c-tools-include.el
        (nvp-with-process-log 
          (c-tools-install-includes arg) nil
-         (load (expand-file-name "c-tools-include" c-tools--dir))
+         (load (expand-file-name "c-tools-include" (nvp-package-root)))
          (c-tools-install arg nil 'irony)))
       (irony
        ;; install irony server
@@ -61,12 +61,12 @@
 ;;; Cache system include paths
 ;; regen includes after 5 days or force with ARG
 (defun c-tools-install-includes (&optional arg)
-  (let ((includes (expand-file-name "script/define-includes" c-tools--dir)))
+  (let ((includes (expand-file-name "script/define-includes" (nvp-package-root))))
     (when (or (not (file-exists-p includes))
               (or arg (nvp-file-older-than-days includes 5)))
       (nvp-with-process "bash"
         :proc-name "define-includes"
-        :proc-args ((expand-file-name "script/define-includes" c-tools--dir)
+        :proc-args ((expand-file-name "script/define-includes" (nvp-package-root))
                     "make_sys_includes")))))
 
 ;;; Irony server
