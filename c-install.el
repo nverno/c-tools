@@ -4,7 +4,7 @@
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
-;; Last modified: <2019-01-28 22:57:40>
+;; Last modified: <2019-01-31 16:17:45>
 ;; Package-Requires: 
 ;; Created: 12 January 2019
 
@@ -66,8 +66,7 @@
               (or arg (nvp-file-older-than-days includes 5)))
       (nvp-with-process "bash"
         :proc-name "define-includes"
-        :proc-args ((expand-file-name "script/define-includes" (nvp-package-root))
-                    "make_sys_includes")))))
+        :proc-args (includes "make_sys_includes")))))
 
 ;;; Irony server
 
