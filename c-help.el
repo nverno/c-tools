@@ -124,12 +124,14 @@
 ;; get semantic-ia snarfed doc
 (defun c-help-semantic-ia-doc (point)
   (let* ((ctxt (semantic-analyze-current-context point))
-         (pf (reverse (oref ctxt prefix)))) ;prefix
-    (cond
-     ;; ((stringp (car pf))
-     ;;  (message "Incomplete symbol name."))
-     ((semantic-tag-p (car pf))
-      (semantic-documentation-for-tag (car pf))))))
+         (pf (reverse (oref ctxt prefix))) ; 'prefix
+         res)
+    (when (semantic-tag-p pf)
+      (setq res (semantic-documentation-for-tag (car pf)))
+      (unless res                       ;try includes?
+        (when-let* ((tab semanticdb-current-table)
+                    (inc (semanticdb-includes-in-table tab)))))
+      res)))
 
 ;;;###autoload
 (defun c-help-semantic-ia-popup-doc (point)
