@@ -123,9 +123,9 @@
 
 ;; get semantic-ia snarfed doc
 (defun c-help-semantic-ia-doc (point)
-  (let* ((ctxt (semantic-analyze-current-context point))
-         (pf (reverse (oref ctxt prefix))) ; 'prefix
-         res)
+  (when-let* ((ctxt (semantic-analyze-current-context point))
+              (pf (reverse (oref ctxt prefix))) ; 'prefix
+)
     (when (semantic-tag-p pf)
       (setq res (semantic-documentation-for-tag (car pf)))
       (unless res                       ;try includes?
