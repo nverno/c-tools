@@ -124,14 +124,12 @@
 ;; get semantic-ia snarfed doc
 (defun c-help-semantic-ia-doc (point)
   (when-let* ((ctxt (semantic-analyze-current-context point))
-              (pf (reverse (oref ctxt prefix))) ; 'prefix
-)
+              (pf (reverse (oref ctxt prefix)))) ; 'prefix
     (when (semantic-tag-p pf)
-      (setq res (semantic-documentation-for-tag (car pf)))
-      (unless res                       ;try includes?
-        (when-let* ((tab semanticdb-current-table)
-                    (inc (semanticdb-includes-in-table tab)))))
-      res)))
+      (or (semantic-documentation-for-tag (car pf))
+          ;; TODO: try includes
+          (when-let* ((tab semanticdb-current-table)
+                      (inc (semanticdb-includes-in-table tab))))))))
 
 ;;;###autoload
 (defun c-help-semantic-ia-popup-doc (point)
@@ -175,6 +173,7 @@
 (defun c-help-jump-to-function-header ()
   (interactive)
   (let ((func (c-help-function-at-point))
+        ;; FIXME: use semanticdb to get include
         (header (c-tools--header-file-name)))
     ;; don't try for static functions
     (if (and func (not (cdr func)) header)

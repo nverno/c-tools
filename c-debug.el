@@ -4,7 +4,7 @@
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-debug
-;; Last modified: <2019-01-25 01:44:39>
+;; Last modified: <2019-02-02 02:18:35>
 ;; Package-Requires: 
 ;; Created: 11 November 2016
 
@@ -70,8 +70,8 @@
 ;; compiler doesnt understande these functions
 (with-no-warnings
   (defhydra c-debug-gud-hydra (:color amaranth
-                               :pre nvp-indicate-hydra-pre
-                               :post nvp-indicate-hydra-post)
+                               :pre nvp-indicate-cursor-pre
+                               :post nvp-indicate-cursor-post)
     ;; vi
     ("h" backward-char nil)
     ("j" next-line nil)
