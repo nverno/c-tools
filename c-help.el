@@ -122,6 +122,8 @@
     (error (xref-pop-marker-stack))))
 
 ;; get semantic-ia snarfed doc
+(declare-function semanticdb-includes-in-table "semantic/db-ref")
+(eval-when-compile (defvar semanticdb-current-table))
 (defun c-help-semantic-ia-doc (point)
   (when-let* ((ctxt (semantic-analyze-current-context point))
               (pf (reverse (oref ctxt prefix)))) ; 'prefix
