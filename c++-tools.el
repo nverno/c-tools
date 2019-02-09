@@ -4,7 +4,7 @@
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
-;; Last modified: <2019-01-26 21:02:23>
+;; Last modified: <2019-02-09 08:46:39>
 ;; Package-Requires: 
 ;; Created: 11 November 2016
 
@@ -31,6 +31,7 @@
   (require 'nvp-macro))
 (require 'c-tools)
 (declare-function c-tools-out-file "c-tools")
+(nvp-declare "" nvp-compile-basic nvp-compile-cmake)
 
 ;; -------------------------------------------------------------------
 ;;; Commands 

@@ -33,18 +33,14 @@
   (require 'cl-lib)
   (require 'nvp-macro)
   (defvar c/R-abbrev-table)
-  (defvar gud-comint-buffer)
-  (defvar irony-server-install-prefix)
   (defvar nvp-abbrev-local-table))
 
 (declare-function xref-push-marker-stack "xref")
 (declare-function c-beginning-of-defun "cc-cmds")
 (declare-function c-mark-function "cc-cmds")
-
-(autoload 'nvp-log "nvp-log")
-(autoload 'nvp-ext-sudo-command "nvp-ext")
-(autoload 'nvp-compile-basic "nvp-compile")
-(autoload 'nvp-compile-cmake "nvp-compile")
+(declare-function nvp-log "nvp-log")
+(declare-function nvp-compile-basic "nvp-compile")
+(declare-function nvp-compile-cmake "nvp-compile")
 (autoload 'string-trim-right "subr-x")
 
 ;;; TODO:
@@ -114,8 +110,8 @@
 ;; -------------------------------------------------------------------
 ;;; Environment
 
-(autoload 'asdf-where "asdf")
-(autoload 'nvp-env-add "nvp-env")
+(declare-function asdf-where "asdf")
+(declare-function nvp-env-add "nvp-env")
 
 (defvar c-tools-ext-includes
   '(("unity" (expand-file-name ".local/include/unity/src" (getenv "HOME"))

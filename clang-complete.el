@@ -49,8 +49,6 @@
 (defvar clang-complete-default-defines '("DEBUG" "TEST")
   "Default symbols to define in .clang_comlete.")
 
-;; -------------------------------------------------------------------
-
 ;; get default system includes for c/c++
 (defun clang-complete-default-includes (mode &optional system)
   (append

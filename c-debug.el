@@ -4,7 +4,7 @@
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-debug
-;; Last modified: <2019-02-02 02:18:35>
+;; Last modified: <2019-02-09 07:43:32>
 ;; Package-Requires: 
 ;; Created: 11 November 2016
 
@@ -28,13 +28,11 @@
 ;;; Commentary:
 ;;; Code:
 (eval-when-compile
-  (require 'nvp-macro))
-(eval-and-compile
+  (require 'nvp-macro)
   (require 'hydra))
-(require 'nvp-indicate)
 (require 'gud)
-(declare-function hippie-expand-shell-setup "hippie-expand-shell")
-(declare-function nvp-comint-setup-history "nvp-comint")
+(nvp-declare "" nvp-indicate-cursor-pre nvp-indicate-cursor-post
+  hippie-expand-shell-setup nvp-comint-setup-history)
 
 ;; -------------------------------------------------------------------
 ;;; GDB REPL
@@ -48,6 +46,7 @@
                              :bol-fn 'comint-line-beginning-position)
   (nvp-comint-setup-history ".gdb_history"))
 
+;;;###autoload(autoload 'nvp-gud-repl-switch "c-debug")
 (nvp-repl-switch "gud" (:repl-mode 'gud-mode
                         :repl-find-fn
                         #'(lambda ()
@@ -57,14 +56,11 @@
   ;; and add source buffer property after GDB has started?
   (call-interactively 'gdb))
 
-;;;###autoload(autoload 'nvp-gud-repl-switch "c-debug")
-
 ;; -------------------------------------------------------------------
 ;;; GDB Hydra
 
-(nvp-bindings "c-mode" 'cc-mode
-  ("<f2> d g" . c-debug-gud-hydra/body))
-(nvp-bindings "c++-mode" 'cc-mode
+(nvp-bindings-multiple-modes (("c"   . cc-mode)
+                              ("c++" . cc-mode))
   ("<f2> d g" . c-debug-gud-hydra/body))
 
 ;; compiler doesnt understande these functions
@@ -91,7 +87,7 @@
     ("o" gud-finish "out")
     ("r" gud-run "run")
     ("q" nil "quit")))
-(hydra-set-property 'c-debug-gud-hydra :verbosity 1)
+(nvp-hydra-set-property 'c-debug-gud-hydra)
 
 (provide 'c-debug)
 ;;; c-debug.el ends here
