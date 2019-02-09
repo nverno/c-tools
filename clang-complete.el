@@ -43,7 +43,7 @@
   (defvar nvp-c++-include-dirs)
   (defvar nvp-clang-c-include-dirs)
   (defvar nvp-clang-c++-include-dirs))
-(autoload 'nvp-log "nvp-log")
+(declare-function nvp-log "nvp-log")
 (autoload 'nvp-env-merge "nvp-env")
 
 (defvar clang-complete-default-defines '("DEBUG" "TEST")
