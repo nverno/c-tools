@@ -36,7 +36,7 @@
   (defvar nvp-abbrev-local-table))
 (declare-function xref-push-marker-stack "xref")
 (nvp-declare "cc-cmds" c-mark-function c-beginning-of-defun)
-(nvp-declare "" nvp-log nvp-compile-basic nvp-compile-cmake)
+(nvp-declare "" nvp-log nvp-compile nvp-compile-cmake)
 (autoload 'string-trim-right "subr-x")
 
 ;;; TODO:
@@ -173,7 +173,7 @@
           (format "%s %s -o %s%s %s" (nvp-program "gcc")
                   flags out (nvp-with-gnu/w32 ".out" ".exe") file)))
     (setq-local compile-command compile-command)
-    (call-interactively 'nvp-compile-basic)))
+    (call-interactively 'nvp-compile)))
 
 ;; compile current file and run it with output to compilation buffer
 (defun nvp-c-compile-and-run (keep &optional compiler flags post-action)
@@ -189,7 +189,7 @@
                       post-action (concat "./" out))
                   (unless keep (concat "; rm " out)))))
     (setq-local compile-command command)
-    (funcall-interactively 'nvp-compile-basic nil current-prefix-arg)))
+    (funcall-interactively 'nvp-compile nil current-prefix-arg)))
 
 ;; watch error output with TEST
 (defun nvp-c-compile-watch (arg)
@@ -213,7 +213,7 @@
   (let ((compile-command (format "gcc -Og -S %s" buffer-file-name))
         (asm-file
          (concat (file-name-sans-extension buffer-file-name) ".s")))
-    (with-current-buffer (call-interactively 'nvp-compile-basic)
+    (with-current-buffer (call-interactively 'nvp-compile)
       (pop-to-buffer (current-buffer))
       (add-hook 'compilation-finish-functions
                 (lambda (_b _s)
@@ -234,7 +234,7 @@
                                  (file-name-sans-extension buffer-file-name)
                                  (file-name-sans-extension buffer-file-name)))
         compilation-scroll-output)
-    (with-current-buffer (call-interactively 'nvp-compile-basic)
+    (with-current-buffer (call-interactively 'nvp-compile)
       (pop-to-buffer (current-buffer))
       ;; (gdb-disassembly-mode)
       (objdump-mode)
@@ -259,7 +259,7 @@
                                        "Additional arguments to function: ")
                                     "")))
          compilation-scroll-output)
-    (with-current-buffer (call-interactively 'nvp-compile-basic)
+    (with-current-buffer (call-interactively 'nvp-compile)
       (pop-to-buffer (current-buffer))
       (add-hook 'compilation-finish-functions
                 (lambda (_b _s)

@@ -31,7 +31,7 @@
   (require 'nvp-macro))
 (require 'nvp-c)
 (declare-function nvp-c-out-file "c-tools")
-(nvp-declare "" nvp-compile-basic nvp-compile-cmake)
+(nvp-declare "" nvp-compile nvp-compile-cmake)
 
 ;; -------------------------------------------------------------------
 ;;; Commands 
@@ -46,7 +46,7 @@
          (compile-command
           (format "%s %s -o %s%s %s" (nvp-program "g++")
                   flags out (nvp-with-gnu/w32 ".out" ".exe") file)))
-    (nvp-compile-basic)))
+    (nvp-compile)))
 
 (defun nvp-c++-compile-and-run (keep)
   (interactive "P")
