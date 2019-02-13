@@ -4,7 +4,7 @@
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
-;; Last modified: <2019-02-12 20:42:14>
+;; Last modified: <2019-02-13 05:13:27>
 ;; Package-Requires: 
 ;; Created: 12 January 2019
 
@@ -60,11 +60,11 @@
       (t (nvp-c-install arg 'includes)))))
 
 ;;; Cache system include paths
-;; regen includes after 5 days or force with ARG
+;; regen includes after number of days or force with ARG
 (defun nvp-c-install-includes (&optional arg)
   (let ((includes (expand-file-name "script/define-includes" (nvp-package-root))))
     (when (or (not (file-exists-p includes))
-              (or arg (nvp-file-older-than-days includes 5)))
+              (or arg (nvp-file-older-than-days includes 20)))
       (nvp-with-process "bash"
         :proc-name "define-includes"
         :proc-args (includes "make_sys_includes")))))
