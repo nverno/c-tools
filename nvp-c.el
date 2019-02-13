@@ -42,6 +42,8 @@
 ;;; TODO:
 ;; - Move env setup ffi - R, lisp - to separate file.
 ;;   Should do env., snippets, abbrevs, etc all together.
+;;; FIXME:
+;; - function signatures => generic parsing method
 
 (nvp-package-define-root :snippets t)
 
