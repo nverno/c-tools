@@ -1,10 +1,10 @@
-;;; c-debug.el --- C debugging -*- lexical-binding: t; -*-
+;;; nvp-c-debug.el --- C debugging -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-debug
-;; Last modified: <2019-02-09 07:43:32>
+;; Last modified: <2019-02-12 21:18:56>
 ;; Package-Requires: 
 ;; Created: 11 November 2016
 
@@ -89,5 +89,5 @@
     ("q" nil "quit")))
 (nvp-hydra-set-property 'c-debug-gud-hydra)
 
-(provide 'c-debug)
-;;; c-debug.el ends here
+(provide 'nvp-c-debug)
+;;; nvp-c-debug.el ends here

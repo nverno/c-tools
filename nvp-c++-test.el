@@ -1,7 +1,8 @@
-;;; c++-test ---  -*- lexical-binding: t; -*-
+;;; nvp-c++-test.el ---  -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
+;; Last modified: <2019-02-12 21:45:24>
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
 ;; Package-Requires: 
@@ -29,8 +30,8 @@
 (eval-when-compile
   (require 'nvp-macro)
   (require 'cl-lib)
-  (require 'c-tools)
-  (require 'c-test) ;; setup macros
+  (require 'nvp-c)
+  (require 'nvp-c-test) ;; setup macros
   (defvar boost-test-abbrev-table))
 (require 'nvp-test)
 (autoload 'yas-expand "yasnippet")
@@ -39,28 +40,28 @@
 ;;; Util
 
 (eval-when-compile
- (defmacro with-c++-vars (&rest body)
+ (defmacro nvp-with-c++-vars (&rest body)
    (declare (indent defun))
    `(nvp-with-project (:test-re ".*test.*\.cpp"
                        :root '("test" "tests" ".git" ".projectile"))
       ,@body))
 
- (defmacro setup-c++-test-buffer ()
+ (defmacro nvp-c++-test--setup-buffer ()
    `(progn
       (setq-local local-abbrev-table boost-test-abbrev-table)
       (nvp-use-local-bindings
-        ("C-c C-c" . c++-test-run-unit-test)))))
+        ("C-c C-c" . nvp-c++-test-run-unit-test)))))
 
 ;; -------------------------------------------------------------------
 ;;; Setup Test
 
-(defun c++-test-init ()
+(defun nvp-c++-test-init ()
   (insert "boost_init")
   (call-interactively 'yas-expand))
 
 ;; if new expand template for new test
-(defun c++-test-buffer (&optional new)
-  (setup-c++-test-buffer)
+(defun nvp-c++-test-setup-buffer (&optional new)
+  (nvp-c++-test--setup-buffer)
   (when (or current-prefix-arg new)
     (goto-char (point-max))
     (insert "\nbatc")
@@ -69,22 +70,23 @@
 ;;;###autoload(autoload 'nvp-project-c++-boost-setup "c++-test")
 (nvp-define-project c++-boost
   :test-fmt "test_%s"
-  :test-init-function 'c++-test-init
-  :test-buffer-function 'c++-test-buffer
-  :test-run-unit-function 'c++-test-run-unit-test)
+  :test-init-function 'nvp-c++-test-init
+  :test-buffer-function 'nvp-c++-test-setup-buffer
+  :test-run-unit-function 'nvp-c++-test-run-unit-test)
 
 ;; -------------------------------------------------------------------
 ;;; Commands 
 
-(defun c++-test-help ()
+(defun nvp-c++-test-help ()
   (interactive)
   (browse-url "https://github.com/jsankey/boost.test-examples/"))
 
-(c-test-runner-fn c++-test-run-unit-test 'c++
-  ;; flags
-  "-std=c++14 -O3 -s"
-  ;; link
-  "-lboost_unit_test_framework")
+(eval-and-compile
+  (nvp-c-test--runner-fn nvp-c++-test-run-unit-test 'c++
+    ;; flags
+    "-std=c++14 -O3 -s"
+    ;; link
+    "-lboost_unit_test_framework"))
 
 (provide 'c++-test)
 ;;; c++-test.el ends here

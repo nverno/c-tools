@@ -1,10 +1,10 @@
-;;; c-install.el --- install -*- lexical-binding: t; -*-
+;;; nvp-c-install.el --- install -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
-;; Last modified: <2019-02-07 08:16:57>
+;; Last modified: <2019-02-12 20:42:14>
 ;; Package-Requires: 
 ;; Created: 12 January 2019
 
@@ -31,21 +31,22 @@
 (eval-when-compile
   (require 'nvp-macro)
   (require 'cl-lib))
-(require 'c-tools)
+(require 'nvp-c)
+(autoload 'nvp-log "nvp-log")
 
 ;; make includes.el and install dependencies or dont with NODEPS
 ;; force includes.el refresh with ARG
 ;;;###autoload
-(defun c-tools-install (arg &optional includes irony)
+(defun nvp-c-install (arg &optional includes irony)
   (interactive "P")
   (let ((arg arg))
     (cond
       (includes 
-       ;; write sys include paths to c-tools-include.el
+       ;; write sys include paths to nvp-c-include.el
        (nvp-with-process-log 
-         (c-tools-install-includes arg) nil
-         (load (expand-file-name "c-tools-include" (nvp-package-root)))
-         (c-tools-install arg nil 'irony)))
+         (nvp-c-install-includes arg) nil
+         (load (expand-file-name "nvp-c-include" (nvp-package-root)))
+         (nvp-c-install arg nil 'irony)))
       (irony
        ;; install irony server
        ;; do depends first, also only returns process object on windows
@@ -53,14 +54,14 @@
        (if (not (require 'irony nil t))
            (nvp-log "Error: `irony' not installed")
          (nvp-with-gnu/w32
-             (c-tools-install-irony)
+             (nvp-c-install-irony)
            (unless (file-exists-p irony-server-install-prefix)
-             (c-tools-install-irony irony-server-install-prefix)))))
-      (t (c-tools-install arg 'includes)))))
+             (nvp-c-install-irony irony-server-install-prefix)))))
+      (t (nvp-c-install arg 'includes)))))
 
 ;;; Cache system include paths
 ;; regen includes after 5 days or force with ARG
-(defun c-tools-install-includes (&optional arg)
+(defun nvp-c-install-includes (&optional arg)
   (let ((includes (expand-file-name "script/define-includes" (nvp-package-root))))
     (when (or (not (file-exists-p includes))
               (or arg (nvp-file-older-than-days includes 5)))
@@ -71,14 +72,14 @@
 ;;; Irony server
 
 (nvp-with-gnu
-  (defun c-tools-install-irony ()
+  (defun nvp-c-install-irony ()
     (if (not (require 'irony nil t))
         (nvp-log "Error: `irony' not installed")
       (call-interactively 'irony-install-server))))
 
 (nvp-with-w32
   ;; Install irony server using MSYS compilers. Return process object
-  (defun c-tools-install-irony (&optional irony-prefix irony-dir build-cmd)
+  (defun nvp-c-install-irony (&optional irony-prefix irony-dir build-cmd)
     (let* ((irony-dir (or irony-dir
                           (expand-file-name "server"
                                             (file-name-directory
@@ -99,5 +100,5 @@
       (start-process-shell-command
        "cmake" "*nvp-install*" (format "cmake %s && %s" args build-cmd)))))
 
-(provide 'c-install)
-;;; c-install.el ends here
+(provide 'nvp-c-install)
+;;; nvp-c-install.el ends here

@@ -1,7 +1,8 @@
-;;; c-help ---  -*- lexical-binding: t; -*-
+;;; nvp-c-help.el ---  -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
+;; Last modified: <2019-02-12 21:08:06>
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
 ;; Package-Requires: 
@@ -36,7 +37,7 @@
 ;;; Sources
 
 ;; sources determined by source file paths
-(defvar c-help-online-sources
+(defvar nvp-c-help-online-sources
   (let ((uri
          "http://pubs.opengroup.org/onlinepubs/9699919799/functions/%s.html"
          ;; "http://en.cppreference.com/mwiki/index.php?title=Special:Search&search=%s"
@@ -46,7 +47,7 @@
 
 ;; if filename prefix is member of car, apply cadr to (format cddr)
 ;; use man 2 for system call type stuff, otherwise man 3
-(defvar c-help-local-sources
+(defvar nvp-c-help-local-sources
   `((("/usr/include/unistd" "/usr/include/fcntl"
       "sys/time" "sys/wait" "sys/resource"
       "/usr/include/signal") . (man "2 %s"))
@@ -56,13 +57,13 @@
 ;;; Util
 
 ;; semantic tag at point
-(defsubst c-help-tag-at (point)
+(defsubst nvp-c-help-tag-at (point)
   (condition-case nil
       (car (reverse (oref (semantic-analyze-current-context point) prefix)))
     (error (message "No symbol found at point"))))
 
 ;; return name of function at point and if it is static
-(defsubst c-help-function-at-point ()
+(defsubst nvp-c-help-function-at-point ()
   (ignore-errors
     (let ((tag (semantic-current-tag)))
       (when (and tag (eq (cadr tag) 'function))
@@ -72,29 +73,29 @@
             (list (car tag))))))))
 
 (eval-when-compile
-  (defmacro c-help-find-source (type file)
+  (defmacro nvp-c-help-find-source (type file)
     "Find help location for TYPE as determined by FILE."
     (pcase type
       (`'online
        `(cl-some (lambda (src)
                    (and (string-prefix-p (car src) ,file)
                         src))
-                 c-help-online-sources))
+                 nvp-c-help-online-sources))
       (_
        `(cdr-safe
          (cl-find-if
           (lambda (entry)
             (cl-some (lambda (e) (string-match-p e ,file)) (car entry)))
-          c-help-local-sources))))))
+          nvp-c-help-local-sources))))))
 
 ;; TODO: if 'man 2' doesn't work, try 'man 3', eg. execvp in unistd
 ;;      - how to hook into Man to know if there was a problem?
 ;;        it creates the buffer no matter what, and runs async
-;; (defun c-help-Man-cooked-hook ()
+;; (defun nvp-c-help-Man-cooked-hook ()
 ;;   (and (eq 0 (buffer-size))
 ;;        (throw 'no-dice nil)))
-;; (setq Man-cooked-hook 'c-help-Man-cooked-hook)
-(defun c-help-get-man-help (cmd)
+;; (setq Man-cooked-hook 'nvp-c-help-Man-cooked-hook)
+(defun nvp-c-help-get-man-help (cmd)
   (let ((buf (man cmd)))
     (sit-for 0.1)                      ;FIXME
     (unless (buffer-live-p buf)
@@ -109,12 +110,11 @@
 ;; -------------------------------------------------------------------
 ;;; Commands
 
-(declare-function xref-push-marker-stack "xref")
-(declare-function xref-pop-marker-stack "xref")
+(nvp-declare "xref" xref-pop-marker-stack xref-push-marker-stack)
 
 ;; wrapper function: use xref marker stack before `semantic-ia-fast-jump'
 ;;;###autoload
-(defun c-help-semantic-ia-fast-jump (point)
+(defun nvp-c-help-semantic-ia-fast-jump (point)
   (interactive "d")
   (xref-push-marker-stack)
   (condition-case nil
@@ -124,7 +124,7 @@
 ;; get semantic-ia snarfed doc
 (declare-function semanticdb-includes-in-table "semantic/db-ref")
 (eval-when-compile (defvar semanticdb-current-table))
-(defun c-help-semantic-ia-doc (point)
+(defun nvp-c-help-semantic-ia-doc (point)
   (when-let* ((ctxt (semantic-analyze-current-context point))
               (pf (reverse (oref ctxt prefix)))) ; 'prefix
     (when (semantic-tag-p pf)
@@ -134,50 +134,50 @@
                       (inc (semanticdb-includes-in-table tab))))))))
 
 ;;;###autoload
-(defun c-help-semantic-ia-popup-doc (point)
+(defun nvp-c-help-semantic-ia-popup-doc (point)
   (interactive "d")
-  (let ((doc (c-help-semantic-ia-doc point)))
+  (let ((doc (nvp-c-help-semantic-ia-doc point)))
     (when doc
       (nvp-with-toggled-tip doc))))
 
 ;; Lookup info in man or online for thing at point
 ;;;###autoload
-(defun c-help-at-point (point &optional online)
+(defun nvp-c-help-at-point (point &optional online)
   (interactive "d")
-  (let* ((tag (c-help-tag-at point))
+  (let* ((tag (nvp-c-help-tag-at point))
          (file (and (semantic-tag-p tag)
                     (semantic-tag-file-name tag))))
     (if (or online current-prefix-arg)
         (let ((ref (and (stringp file)
-                        (c-help-find-source 'online file))))
+                        (nvp-c-help-find-source 'online file))))
           (if (not ref)
               (message "No documentation source found for %S" tag)
             (browse-url (format (cdr ref) (semantic-tag-name tag)))))
       (let ((action (and (stringp file)
-                         (c-help-find-source 'local file)))
+                         (nvp-c-help-find-source 'local file)))
             (tag-name (or (and (semantic-tag-p tag)
                                (semantic-tag-name tag))
                           tag)))
         (when action
           (pcase (car action)
-            ('man (c-help-get-man-help (format (cadr action) tag-name)))
+            ('man (nvp-c-help-get-man-help (format (cadr action) tag-name)))
             (_ (apply (car action)
                       (format (cadr action) tag-name)
                       (cddr action)))))))))
 
 ;; TODO: index and search
 ;;;###autoload
-(defun c-help-std ()
+(defun nvp-c-help-std ()
   (interactive)
   (browse-url "http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf"))
 
 ;; jump to function in header file
 ;;;###autoload
-(defun c-help-jump-to-function-header ()
+(defun nvp-c-help-jump-to-function-header ()
   (interactive)
-  (let ((func (c-help-function-at-point))
+  (let ((func (nvp-c-help-function-at-point))
         ;; FIXME: use semanticdb to get include
-        (header (c-tools--header-file-name)))
+        (header (nvp-c--header-file-name)))
     ;; don't try for static functions
     (if (and func (not (cdr func)) header)
         (progn
@@ -186,5 +186,5 @@
           (search-forward (car func) nil 'move))
       (message "function %s is static" (car func)))))
 
-(provide 'c-help)
-;;; c-help.el ends here
+(provide 'nvp-c-help)
+;;; nvp-c-help.el ends here

@@ -1,7 +1,8 @@
-;;; boost-x ---  -*- lexical-binding: t; -*-
+;;; nvp-boost. ---  -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
+;; Last modified: <2019-02-12 20:43:25>
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
 ;; Package-Requires: 
@@ -33,20 +34,20 @@
 ;; -------------------------------------------------------------------
 ;;; Util
 
-(defvar boost-x--version nil)
+(defvar nvp-boost--version nil)
 
 (eval-when-compile
-  (defmacro boost-version-string (arg)
-    `(or boost-x--version
-         (setq boost-x--version
+  (defmacro nvp-boost--version-string (arg)
+    `(or nvp-boost--version
+         (setq nvp-boost--version
                (mapconcat
                 'number-to-string
-                (boost-x--version
+                (nvp-boost--version
                  (and ,arg (read-directory-name "Boost root directory: ")))
                 "_")))))
 
 ;; get current boost version
-(defun boost-x--version (&optional boost-root)
+(defun nvp-boost--version (&optional boost-root)
   (let ((file (expand-file-name "version.hpp" (or boost-root
                                                   (getenv "BOOST_ROOT")
                                                   "/usr/include/boost"))))
@@ -62,14 +63,14 @@
 ;;; Commands
 
 ;;;###autoload
-(defun boost-x-version (arg)
+(defun nvp-boost-version (arg)
   (interactive "P")
-  (message "Boost version: %s" (boost-version-string arg)))
+  (message "Boost version: %s" (nvp-boost--version-string arg)))
 
 ;;;###autoload
-(defun boost-x-lookup-help (arg)
+(defun nvp-boost-lookup-help (arg)
   (interactive "P")
-  (browse-url (concat "www.boost.org/doc/libs/" (boost-version-string arg))))
+  (browse-url (concat "www.boost.org/doc/libs/" (nvp-boost--version-string arg))))
 
-(provide 'boost-x)
-;;; boost-x.el ends here
+(provide 'nvp-boost)
+;;; nvp-boost.el ends here

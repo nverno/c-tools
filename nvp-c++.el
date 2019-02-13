@@ -1,10 +1,10 @@
-;;; c++-tools.el ---  -*- lexical-binding: t; -*-
+;;; nvp-c++.el --- C++ helpers -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
+;; Last modified: <2019-02-12 21:22:27>
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
-;; Last modified: <2019-02-09 08:46:39>
 ;; Package-Requires: 
 ;; Created: 11 November 2016
 
@@ -29,8 +29,8 @@
 ;;; Code:
 (eval-when-compile
   (require 'nvp-macro))
-(require 'c-tools)
-(declare-function c-tools-out-file "c-tools")
+(require 'nvp-c)
+(declare-function nvp-c-out-file "c-tools")
 (nvp-declare "" nvp-compile-basic nvp-compile-cmake)
 
 ;; -------------------------------------------------------------------
@@ -38,7 +38,7 @@
 
 ;;; Compile
 ;; pretty much same as c-tools-compile
-(nvp-make-or-compile-fn c++-tools-compile
+(nvp-make-or-compile-fn nvp-c++-compile
   (:default-prompt (read-from-minibuffer "Compiler flags: "))
   (let* ((flags (or args "-Wall -Werror -O2 -g -std=c++14"))
          (file (file-name-nondirectory buffer-file-name))
@@ -48,7 +48,7 @@
                   flags out (nvp-with-gnu/w32 ".out" ".exe") file)))
     (nvp-compile-basic)))
 
-(defun c++-tools-compile-and-run (keep)
+(defun nvp-c++-compile-and-run (keep)
   (interactive "P")
   (funcall-interactively 'c-tools-compile-and-run keep
                          (nvp-program "g++") "-std=c++14 -O3 -s"))
@@ -63,10 +63,10 @@ and <code>...</code>."
   :group 'font-lock-highlighting-faces)
 
 ;; toggle font-locking for doxygen
-(defvar-local c++-tools--add-font t)
-(defun c++-tools-doxygen ()
+(defvar-local nvp-c++--add-font t)
+(defun nvp-c++-doxygen ()
   (interactive)
-  (if (setq c++-tools--add-font (not c++-tools--add-font))
+  (if (setq nvp-c++--add-font (not nvp-c++--add-font))
       (font-lock-refresh-defaults)
     (font-lock-add-keywords
      ;; 'c++-mode
@@ -89,5 +89,5 @@ and <code>...</code>."
     (font-lock-flush)
     (font-lock-ensure)))
 
-(provide 'c++-tools)
-;;; c++-tools.el ends here
+(provide 'nvp-c++)
+;;; nvp-c++.el ends here

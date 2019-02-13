@@ -1,4 +1,4 @@
-;;; c-tools.el --- ... -*- lexical-binding: t; -*-
+;;; nvp-c.el --- ... -*- lexical-binding: t; -*-
 
 ;; This is free and unencumbered software released into the public domain.
 
@@ -34,13 +34,9 @@
   (require 'nvp-macro)
   (defvar c/R-abbrev-table)
   (defvar nvp-abbrev-local-table))
-
 (declare-function xref-push-marker-stack "xref")
-(declare-function c-beginning-of-defun "cc-cmds")
-(declare-function c-mark-function "cc-cmds")
-(declare-function nvp-log "nvp-log")
-(declare-function nvp-compile-basic "nvp-compile")
-(declare-function nvp-compile-cmake "nvp-compile")
+(nvp-declare "cc-cmds" c-mark-function c-beginning-of-defun)
+(nvp-declare "" nvp-log nvp-compile-basic nvp-compile-cmake)
 (autoload 'string-trim-right "subr-x")
 
 ;;; TODO:
@@ -49,24 +45,24 @@
 
 (nvp-package-define-root :snippets t)
 
-(defvar-local c-tools-local-include-paths nil)
-(setq-default c-tools-local-include-paths '("." ".." "../include"))
+(defvar-local nvp-c-local-include-paths nil)
+(setq-default nvp-c-local-include-paths '("." ".." "../include"))
 
 ;; -------------------------------------------------------------------
 ;;; Util
 
-(defsubst c-tools-out-file (&optional file)
+(defsubst nvp-c-out-file (&optional file)
   (concat (file-name-sans-extension (or file (buffer-file-name)))
           (nvp-with-gnu/w32 ".out" ".exe")))
 
 ;; associated header file name
-(defsubst c-tools--header-file-name (&optional buffer)
+(defsubst nvp-c--header-file-name (&optional buffer)
   (concat (file-name-sans-extension (or buffer buffer-file-name)) ".h"))
 
 ;; split string STR on commas, but only when not between <..>
 ;; eg., "std::vector<std::pair<int,int>> i, int j" =>
 ;;      ("std::vector<std::pair<int,int>> i" "int j")
-(defun c-tools-split-string (str &optional delim)
+(defun nvp-c-split-string (str &optional delim)
   (when (not (zerop (length str)))
     (let ((delim (or delim ?\,))
           (bcount 0)                     ; current opening brace count
@@ -89,7 +85,7 @@
       (nreverse res))))
 
 ;; pull out functions signatures from current buffer using ctags
-(defun c-tools-function-signatures (&optional file ignore-main ignore-static)
+(defun nvp-c-function-signatures (&optional file ignore-main ignore-static)
   (when-let* ((sigs (process-lines
                (nvp-program "ctags" 'no-compile) "-x" "--c-kinds=fp"
                (or file buffer-file-name)))
@@ -113,7 +109,7 @@
 (declare-function asdf-where "asdf")
 (declare-function nvp-env-add "nvp-env")
 
-(defvar c-tools-ext-includes
+(defvar nvp-c-ext-includes
   '(("unity" (expand-file-name ".local/include/unity/src" (getenv "HOME"))
      "/unity/src")
     ("R"     (expand-file-name "lib/R/include" (asdf-where "R")) "/R/include")
@@ -122,11 +118,11 @@
 
 ;; set environment stuff for macro expanding
 ;; could also set local `c-macro-preprocessor'?
-(defun c-tools-setenv (type)
+(defun nvp-c-setenv (type)
   "Add include path of TYPE to macroexpand all the shittles."
   (interactive
-   (list (ido-completing-read "Add include path for: " c-tools-ext-includes)))
-  (cl-destructuring-bind (kind loc regex) (assoc-string type c-tools-ext-includes)
+   (list (ido-completing-read "Add include path for: " nvp-c-ext-includes)))
+  (cl-destructuring-bind (kind loc regex) (assoc-string type nvp-c-ext-includes)
     (pcase kind
       (`"R"
        (setq-local local-abbrev-table c/R-abbrev-table)
@@ -137,12 +133,12 @@
 ;; ------------------------------------------------------------
 ;;; Commands
 
-(nvp-newline c-tools-newline-dwim nil
+(nvp-newline nvp-c-newline-dwim nil
   :pairs (("{" "}"))
   :comment-re (" *\\(?:/\\*\\|\\*\\)" . "\\*/ *")
   :comment-start "* ")
 
-(defun c-tools-newline-x ()
+(defun nvp-c-newline-x ()
   (interactive)
   (end-of-line)
   (delete-horizontal-space)
@@ -152,7 +148,7 @@
 
 ;;;-- Marking --
 
-(defun c-tools-mark-defun ()
+(defun nvp-c-mark-defun ()
   (interactive)
   (nvp-mark-defun
    ;; mark function on first invoke
@@ -166,7 +162,7 @@
 
 ;; run make / cmake if there are corresponding makefiles,
 ;; otherwise prompt / use default
-(nvp-make-or-compile-fn c-tools-compile
+(nvp-make-or-compile-fn nvp-c-compile
   (:default-prompt (read-from-minibuffer "Compiler flags: "))
   (let* ((flags (or args "-Wall -Werror -O2 -g -std=c11"))
          (file (file-name-nondirectory buffer-file-name))
@@ -178,7 +174,7 @@
     (call-interactively 'nvp-compile-basic)))
 
 ;; compile current file and run it with output to compilation buffer
-(defun c-tools-compile-and-run (keep &optional compiler flags post-action)
+(defun nvp-c-compile-and-run (keep &optional compiler flags post-action)
   (interactive "P")
   (let* ((out (concat (file-name-sans-extension
                        (file-name-nondirectory buffer-file-name))
@@ -194,23 +190,23 @@
     (funcall-interactively 'nvp-compile-basic nil current-prefix-arg)))
 
 ;; watch error output with TEST
-(defun c-tools-compile-watch (arg)
+(defun nvp-c-compile-watch (arg)
   (interactive "P")
   (let ((file (if arg (read-from-minibuffer "Output file: " "out.txt")
                 "out.txt"))
-        (out (file-name-nondirectory (c-tools-out-file))))
-    (c-tools-compile-and-run
+        (out (file-name-nondirectory (nvp-c-out-file))))
+    (nvp-c-compile-and-run
      nil nil "-O3 -DTEST -std=c11"
      (concat "./" out " 2> " file
              "& gnome-terminal -x watch tail -n10 " file))))
 
-(defun c-tools-compile-debug ()
+(defun nvp-c-compile-debug ()
   (interactive)
-  (c-tools-compile-and-run 'keep nil "-Wall -Werror -ggdb3 -DDEBUG" 'no-run)
+  (nvp-c-compile-and-run 'keep nil "-Wall -Werror -ggdb3 -DDEBUG" 'no-run)
   (call-interactively 'gdb))
 
 ;; show assembly in other window, delete assembly output
-(defun c-tools-compile-asm ()
+(defun nvp-c-compile-asm ()
   (interactive)
   (let ((compile-command (format "gcc -Og -S %s" buffer-file-name))
         (asm-file
@@ -229,14 +225,14 @@
 ;; FIXME: add tab/backtab movement
 ;; (autoload 'gdb-disassembly-mode "gdb-mi")
 (declare-function objdump-mode "objdump")
-(defun c-tools-compile-objdump ()
+(defun nvp-c-compile-objdump ()
   (interactive)
   (let ((compile-command (format "gcc -Og -c %s; objdump -d %s.o; rm %s.o"
                                  buffer-file-name
                                  (file-name-sans-extension buffer-file-name)
                                  (file-name-sans-extension buffer-file-name)))
         compilation-scroll-output)
-    (with-current-buffer (call-interactively 'nvp-basic-compile)
+    (with-current-buffer (call-interactively 'nvp-compile-basic)
       (pop-to-buffer (current-buffer))
       ;; (gdb-disassembly-mode)
       (objdump-mode)
@@ -246,7 +242,7 @@
                   (search-forward "Disassembly" nil 'move 1))
                 nil 'local))))
 
-(defun c-tools-compile-strace (&optional arg)
+(defun nvp-c-compile-strace (&optional arg)
   (interactive "P")
   (let* ((prog (file-name-sans-extension buffer-file-name))
          (strace-file (concat prog ".strace"))
@@ -261,7 +257,7 @@
                                        "Additional arguments to function: ")
                                     "")))
          compilation-scroll-output)
-    (with-current-buffer (call-interactively 'nvp-basic-compile)
+    (with-current-buffer (call-interactively 'nvp-compile-basic)
       (pop-to-buffer (current-buffer))
       (add-hook 'compilation-finish-functions
                 (lambda (_b _s)
@@ -281,19 +277,19 @@
 (declare-function yas-lookup-snippet "yasnippet")
 
 ;; jump to associated header, with arg create and/or update it as well
-(defun c-tools-jump-or-update-header (update)
+(defun nvp-c-jump-or-update-header (update)
   (interactive "P")
   (if update
-      (call-interactively 'c-tools-create-or-update-header)
+      (call-interactively 'nvp-c-create-or-update-header)
     (condition-case nil
         
-        (find-file-other-window (c-tools--header-file-name)))))
+        (find-file-other-window (nvp-c--header-file-name)))))
 
 ;;; Create/update header file with function signatures
-(defun c-tools-create-or-update-header (and-go)
+(defun nvp-c-create-or-update-header (and-go)
   (interactive (list t))
-  (let ((header (c-tools--header-file-name))
-        (sigs (c-tools-function-signatures nil 'ignore-main 'ignore-static))
+  (let ((header (nvp-c--header-file-name))
+        (sigs (nvp-c-function-signatures nil 'ignore-main 'ignore-static))
         (yas-wrap-around-region nil)
         (init t))
     (when (file-exists-p header)
@@ -302,7 +298,7 @@
             ;; remove any signatures that are already found in the header file
             (cl-set-difference
              sigs
-             (c-tools-function-signatures header) :test 'string=)))
+             (nvp-c-function-signatures header) :test 'string=)))
     (when (or init sigs)
       (with-current-buffer (find-file header)
         (and sigs
@@ -322,7 +318,7 @@
       (find-file header))))
 
 ;; add header guard
-(defun c-tools-add-guard ()
+(defun nvp-c-add-guard ()
   (interactive)
   (let ((guard (concat
                 (upcase (file-name-sans-extension
@@ -338,7 +334,7 @@
 ;; -------------------------------------------------------------------
 ;;; Doxygen
 
-(defun c-tools-toggle-doxygen ()
+(defun nvp-c-toggle-doxygen ()
   (interactive)
   (save-excursion
     (when (re-search-forward "\\(?://\\|/\\*+\\)" nil 'move)
@@ -355,7 +351,7 @@
 ;; align comment start / end for doxygen region
 (eval-when-compile
   (defvar align-to-tab-stop))
-(defun c-tools-align-doxygen (beg end)
+(defun nvp-c-align-doxygen (beg end)
   (interactive "*r")
   (let (indent-tabs-mode align-to-tab-stop)
     (align-regexp beg end "\\(\\s-*\\)/\\*\\*")
@@ -378,7 +374,7 @@
 
 ;; convert functions args to doxygen params
 (defun c-yas-args-docstring (text)
-  (let ((args (c-tools-split-string text)))
+  (let ((args (nvp-c-split-string text)))
     (and args
          (mapconcat 'identity
                     (mapcar (lambda (s) (concat "\n * @param " s)) args) ""))))
@@ -389,5 +385,5 @@
 (defun nvp-c-abbrev-expand-p ()
   (not (memq last-input-event '(?_))))
 
-(provide 'c-tools)
-;;; c-tools.el ends here
+(provide 'nvp-c)
+;;; nvp-c.el ends here
