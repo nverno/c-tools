@@ -4,7 +4,7 @@
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
-;; Last modified: <2019-02-13 05:13:27>
+;; Last modified: <2019-02-14 01:02:35>
 ;; Package-Requires: 
 ;; Created: 12 January 2019
 
@@ -32,7 +32,7 @@
   (require 'nvp-macro)
   (require 'cl-lib))
 (require 'nvp-c)
-(autoload 'nvp-log "nvp-log")
+(declare-function nvp-log "nvp-log")
 
 ;; make includes.el and install dependencies or dont with NODEPS
 ;; force includes.el refresh with ARG
@@ -43,10 +43,10 @@
     (cond
       (includes 
        ;; write sys include paths to nvp-c-include.el
-       (nvp-with-process-log 
-         (nvp-c-install-includes arg) nil
-         (load (expand-file-name "nvp-c-include" (nvp-package-root)))
-         (nvp-c-install arg nil 'irony)))
+       (nvp-with-process-log (nvp-c-install-includes arg)
+         :on-success (progn
+                       (load (expand-file-name "nvp-c-include" (nvp-package-root)))
+                       (nvp-c-install arg nil 'irony))))
       (irony
        ;; install irony server
        ;; do depends first, also only returns process object on windows
