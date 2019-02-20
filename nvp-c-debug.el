@@ -4,7 +4,7 @@
 
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-debug
-;; Last modified: <2019-02-12 21:18:56>
+;; Last modified: <2019-02-20 13:33:40>
 ;; Package-Requires: 
 ;; Created: 11 November 2016
 
@@ -32,7 +32,7 @@
   (require 'hydra))
 (require 'gud)
 (nvp-declare "" nvp-indicate-cursor-pre nvp-indicate-cursor-post
-  hippie-expand-shell-setup nvp-comint-setup-history)
+  nvp-he-history-setup nvp-comint-setup-history)
 
 ;; -------------------------------------------------------------------
 ;;; GDB REPL
@@ -42,8 +42,8 @@
 ;;;###autoload
 (defun nvp-gud-repl-setup ()
   (require 'nvp-comint)
-  (hippie-expand-shell-setup :history 'comint-input-ring
-                             :bol-fn 'comint-line-beginning-position)
+  (nvp-he-history-setup :history 'comint-input-ring
+                        :bol-fn 'comint-line-beginning-position)
   (nvp-comint-setup-history ".gdb_history"))
 
 ;;;###autoload(autoload 'nvp-gud-repl-switch "c-debug")
