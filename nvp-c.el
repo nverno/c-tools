@@ -152,7 +152,7 @@
 
 (defun nvp-c-mark-defun ()
   (interactive)
-  (nvp-mark-defun
+  (nvp--mark-defun                      ;fixme
    ;; mark function on first invoke
    (c-mark-function)
    ;; successively extend to next functions
