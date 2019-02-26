@@ -1,4 +1,4 @@
-;; -*- coding: utf-8; mode: emacs-lisp -*-
+;; -*- coding: utf-8; -*-
 (define-abbrev-table 'c-macros-includes-abbrev-table
   '(("#i" "#include" nil :system t)
     ("#e" "#endif" nil :system t)
@@ -120,14 +120,3 @@
     )
   "Unity abbrevs."
   :parents (list c-mode-abbrev-table))
-
-(define-abbrev-table 'awk-mode-abbrev-table
-  '(
-    ("pr" "print" nil :system t)
-    ("beg" "BEGIN" nil :system t)
-    ("ret" "return" nil :systen t)
-    ("begin" "BEGIN" nil :system t)
-    ("end" "END" nil :system t)
-    )
-  "Awk-Mode Abbrevs."
-  :parents (list prog-mode-abbrev-table))
