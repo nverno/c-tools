@@ -2,7 +2,7 @@
 # name: function
 # key: fun
 # --
-function ${1:name}($2) {
-  $0
-return $3
+function ${1:name}($2${3:,   ${4:local-vars}}) {
+    $0
+    return $5
 }
