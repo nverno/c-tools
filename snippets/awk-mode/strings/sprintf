@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: sprintf
-# key: sprf
-# --
-sprintf("${1:%s}",${2:vars})

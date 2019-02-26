@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: index find
-# key: index
-# --
-index(${1:string},${2:stringtosearch})

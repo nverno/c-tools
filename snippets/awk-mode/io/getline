@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: command | getline
-# key: getline
-# --
-tmp="$1"  #command
-          while ((tmp|getline) > 0) {
-            $0
-          }
-          close(tmp)

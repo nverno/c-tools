@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: END
-# key: e
-# --
-END { $0 }

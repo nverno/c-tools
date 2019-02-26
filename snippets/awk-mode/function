@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: function
-# key: fun
-# --
-function ${1:name}($2${3:,   ${4:local-vars}}) {
-    $0
-    return $5
-}
