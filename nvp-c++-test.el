@@ -2,7 +2,7 @@
 
 ;; This is free and unencumbered software released into the public domain.
 
-;; Last modified: <2019-02-12 21:45:24>
+;; Last modified: <2019-02-27 00:10:01>
 ;; Author: Noah Peart <noah.v.peart@gmail.com>
 ;; URL: https://github.com/nverno/c-tools
 ;; Package-Requires: 
@@ -67,7 +67,7 @@
     (insert "\nbatc")
     (call-interactively 'yas-expand)))
 
-;;;###autoload(autoload 'nvp-project-c++-boost-setup "c++-test")
+;;;###autoload(autoload 'nvp-project-c++-boost-setup "nvp-c++-test")
 (nvp-define-project c++-boost
   :test-fmt "test_%s"
   :test-init-function 'nvp-c++-test-init
@@ -88,5 +88,5 @@
     ;; link
     "-lboost_unit_test_framework"))
 
-(provide 'c++-test)
-;;; c++-test.el ends here
+(provide 'nvp-c++-test)
+;;; nvp-c++-test.el ends here
